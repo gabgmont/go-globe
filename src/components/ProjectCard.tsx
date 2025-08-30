@@ -1,0 +1,107 @@
+import { Card, CardContent, CardFooter, CardHeader } from "@/components/ui/card";
+import { Button } from "@/components/ui/button";
+import { Badge } from "@/components/ui/badge";
+import { MapPin, Target, Users, Heart } from "lucide-react";
+
+interface ProjectCardProps {
+  id: string;
+  title: string;
+  location: string;
+  description: string;
+  category: string;
+  progress: number;
+  goal: number;
+  supporters: number;
+  image?: string;
+  urgent?: boolean;
+}
+
+export const ProjectCard = ({
+  title,
+  location,
+  description,
+  category,
+  progress,
+  goal,
+  supporters,
+  image,
+  urgent = false
+}: ProjectCardProps) => {
+  const progressPercentage = (progress / goal) * 100;
+
+  return (
+    <Card className="group hover:shadow-card-hover transition-all duration-300 transform hover:-translate-y-1 border-0 shadow-card bg-gradient-to-br from-card to-card/95">
+      <CardHeader className="p-0">
+        <div className="relative overflow-hidden rounded-t-lg h-48 bg-gradient-to-br from-primary/10 to-accent/10">
+          {image ? (
+            <img 
+              src={image} 
+              alt={title}
+              className="w-full h-full object-cover group-hover:scale-105 transition-transform duration-300"
+            />
+          ) : (
+            <div className="w-full h-full flex items-center justify-center bg-gradient-to-br from-primary/20 to-accent/20">
+              <Target className="w-16 h-16 text-primary/40" />
+            </div>
+          )}
+          {urgent && (
+            <Badge className="absolute top-3 right-3 bg-destructive text-destructive-foreground shadow-md">
+              Urgente
+            </Badge>
+          )}
+          <Badge className="absolute top-3 left-3 bg-background/90 text-foreground shadow-md">
+            {category}
+          </Badge>
+        </div>
+      </CardHeader>
+      
+      <CardContent className="p-4 pb-2">
+        <div className="flex items-start gap-2 mb-2">
+          <MapPin className="w-4 h-4 text-muted-foreground mt-1 flex-shrink-0" />
+          <span className="text-sm text-muted-foreground">{location}</span>
+        </div>
+        <h3 className="font-semibold text-lg mb-2 line-clamp-2 group-hover:text-primary transition-colors">
+          {title}
+        </h3>
+        <p className="text-muted-foreground text-sm line-clamp-3 mb-4">
+          {description}
+        </p>
+        
+        <div className="space-y-3">
+          <div className="flex justify-between items-center text-sm">
+            <span className="text-muted-foreground">Progresso</span>
+            <span className="font-medium">{Math.round(progressPercentage)}%</span>
+          </div>
+          <div className="w-full bg-secondary rounded-full h-2">
+            <div 
+              className="bg-gradient-to-r from-accent to-accent-glow h-2 rounded-full transition-all duration-500"
+              style={{ width: `${Math.min(progressPercentage, 100)}%` }}
+            />
+          </div>
+          <div className="flex justify-between items-center">
+            <div className="flex items-center gap-1 text-sm text-muted-foreground">
+              <Users className="w-4 h-4" />
+              <span>{supporters} apoiadores</span>
+            </div>
+            <div className="text-right">
+              <div className="text-lg font-bold text-accent">R$ {progress.toLocaleString()}</div>
+              <div className="text-xs text-muted-foreground">de R$ {goal.toLocaleString()}</div>
+            </div>
+          </div>
+        </div>
+      </CardContent>
+      
+      <CardFooter className="p-4 pt-2">
+        <div className="flex gap-2 w-full">
+          <Button variant="support" className="flex-1">
+            <Heart className="w-4 h-4" />
+            Apoiar
+          </Button>
+          <Button variant="outline" size="sm">
+            Ver mais
+          </Button>
+        </div>
+      </CardFooter>
+    </Card>
+  );
+};
