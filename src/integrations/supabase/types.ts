@@ -78,6 +78,7 @@ export type Database = {
           created_at: string
           id: string
           location: string | null
+          missionary_application_id: string | null
           name: string
           objectives: string
           status: string
@@ -90,6 +91,7 @@ export type Database = {
           created_at?: string
           id?: string
           location?: string | null
+          missionary_application_id?: string | null
           name: string
           objectives: string
           status?: string
@@ -102,13 +104,22 @@ export type Database = {
           created_at?: string
           id?: string
           location?: string | null
+          missionary_application_id?: string | null
           name?: string
           objectives?: string
           status?: string
           updated_at?: string
           user_id?: string
         }
-        Relationships: []
+        Relationships: [
+          {
+            foreignKeyName: "missions_missionary_application_id_fkey"
+            columns: ["missionary_application_id"]
+            isOneToOne: false
+            referencedRelation: "missionary_applications"
+            referencedColumns: ["id"]
+          },
+        ]
       }
       profiles: {
         Row: {

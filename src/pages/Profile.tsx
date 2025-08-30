@@ -58,7 +58,14 @@ const Profile = () => {
     try {
       const { data, error } = await supabase
         .from('missions')
-        .select('*')
+        .select(`
+          *,
+          missionary_applications!inner (
+            name,
+            current_location,
+            work_category
+          )
+        `)
         .eq('user_id', user.id)
         .eq('status', 'active')
         .order('created_at', { ascending: false })

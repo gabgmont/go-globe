@@ -1,4 +1,4 @@
-import { useState } from 'react';
+import { useState, useEffect } from 'react';
 import { useNavigate } from 'react-router-dom';
 import { useAuth } from '@/hooks/useAuth';
 import { Header } from '@/components/Header';
@@ -17,6 +17,8 @@ const NewMission = () => {
   const navigate = useNavigate();
   const { toast } = useToast();
   const [loading, setLoading] = useState(false);
+  const [missionaryApplication, setMissionaryApplication] = useState<any>(null);
+  const [loadingApplication, setLoadingApplication] = useState(true);
   const [formData, setFormData] = useState({
     name: '',
     category: '',
@@ -35,9 +37,39 @@ const NewMission = () => {
     'Outro'
   ];
 
+  useEffect(() => {
+    if (user) {
+      fetchMissionaryApplication();
+    }
+  }, [user]);
+
+  const fetchMissionaryApplication = async () => {
+    if (!user) return;
+
+    try {
+      const { data, error } = await supabase
+        .from('missionary_applications')
+        .select('*')
+        .eq('user_id', user.id)
+        .order('created_at', { ascending: false })
+        .limit(1)
+        .maybeSingle();
+
+      if (error && error.code !== 'PGRST116') {
+        console.error('Error fetching missionary application:', error);
+      } else {
+        setMissionaryApplication(data);
+      }
+    } catch (error) {
+      console.error('Error fetching missionary application:', error);
+    } finally {
+      setLoadingApplication(false);
+    }
+  };
+
   const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault();
-    if (!user) return;
+    if (!user || !missionaryApplication) return;
 
     setLoading(true);
     try {
@@ -45,6 +77,7 @@ const NewMission = () => {
         .from('missions')
         .insert({
           user_id: user.id,
+          missionary_application_id: missionaryApplication.id,
           name: formData.name,
           category: formData.category,
           location: formData.location || null,
@@ -84,6 +117,49 @@ const NewMission = () => {
                 Você precisa estar logado para criar uma missão.
               </CardDescription>
             </CardHeader>
+          </Card>
+        </div>
+      </div>
+    );
+  }
+
+  if (loadingApplication) {
+    return (
+      <div className="min-h-screen bg-gradient-to-br from-background to-secondary/20">
+        <Header />
+        <div className="container mx-auto px-4 py-12">
+          <Card className="max-w-md mx-auto">
+            <CardContent className="p-6">
+              <div className="text-center text-muted-foreground">
+                Carregando informações...
+              </div>
+            </CardContent>
+          </Card>
+        </div>
+      </div>
+    );
+  }
+
+  if (!missionaryApplication) {
+    return (
+      <div className="min-h-screen bg-gradient-to-br from-background to-secondary/20">
+        <Header />
+        <div className="container mx-auto px-4 py-12">
+          <Card className="max-w-md mx-auto">
+            <CardHeader>
+              <CardTitle>Aplicação necessária</CardTitle>
+              <CardDescription>
+                Você precisa ter uma aplicação de missionário aprovada para criar missões.
+              </CardDescription>
+            </CardHeader>
+            <CardContent>
+              <Button 
+                onClick={() => navigate('/missionary-application')}
+                className="w-full"
+              >
+                Fazer aplicação missionária
+              </Button>
+            </CardContent>
           </Card>
         </div>
       </div>
