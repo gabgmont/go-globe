@@ -7,6 +7,7 @@ import { AuthProvider } from "@/hooks/useAuth";
 import Index from "./pages/Index";
 import MissionaryProfile from "./pages/MissionaryProfile";
 import Profile from "./pages/Profile";
+import MissionaryApplication from "./pages/MissionaryApplication";
 import NotFound from "./pages/NotFound";
 
 const queryClient = new QueryClient();
@@ -22,6 +23,7 @@ const App = () => (
             <Route path="/" element={<Index />} />
             <Route path="/missionary/:id" element={<MissionaryProfile />} />
             <Route path="/profile" element={<Profile />} />
+            <Route path="/missionary-application" element={<MissionaryApplication />} />
             {/* ADD ALL CUSTOM ROUTES ABOVE THE CATCH-ALL "*" ROUTE */}
             <Route path="*" element={<NotFound />} />
           </Routes>

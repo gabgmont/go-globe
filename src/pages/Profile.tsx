@@ -124,6 +124,24 @@ const Profile = () => {
               </form>
             </CardContent>
           </Card>
+
+          <Card>
+            <CardHeader>
+              <CardTitle>Tornar-se Missionário</CardTitle>
+              <CardDescription>
+                Compartilhe sua vocação e experiência missionária
+              </CardDescription>
+            </CardHeader>
+            <CardContent>
+              <Button 
+                onClick={() => window.location.href = '/missionary-application'}
+                className="w-full"
+                variant="default"
+              >
+                Quero ser um missionário
+              </Button>
+            </CardContent>
+          </Card>
         </div>
       </main>
     </div>

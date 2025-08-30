@@ -1,0 +1,326 @@
+import { useState } from 'react';
+import { useAuth } from '@/hooks/useAuth';
+import { Header } from '@/components/Header';
+import { Button } from '@/components/ui/button';
+import { Input } from '@/components/ui/input';
+import { Label } from '@/components/ui/label';
+import { Textarea } from '@/components/ui/textarea';
+import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from '@/components/ui/select';
+import { Card, CardContent, CardDescription, CardHeader, CardTitle } from '@/components/ui/card';
+import { useToast } from '@/hooks/use-toast';
+import { supabase } from '@/integrations/supabase/client';
+import { CalendarIcon, Upload, ArrowLeft } from 'lucide-react';
+import { Link } from 'react-router-dom';
+
+const MissionaryApplication = () => {
+  const { user } = useAuth();
+  const { toast } = useToast();
+  const [loading, setLoading] = useState(false);
+  const [formData, setFormData] = useState({
+    name: '',
+    photo: null as File | null,
+    current_location: '',
+    start_date: '',
+    work_category: '',
+    description: '',
+    email: '',
+    phone: '',
+    website: '',
+    presentation_video: null as File | null,
+    additional_info: ''
+  });
+
+  const workCategories = [
+    'Evangelização',
+    'Ensino e Educação',
+    'Assistência Social',
+    'Saúde e Medicina',
+    'Construção e Desenvolvimento',
+    'Tradução Bíblica',
+    'Plantação de Igrejas',
+    'Ministério Infantil',
+    'Ministério Jovem',
+    'Outro'
+  ];
+
+  const handleInputChange = (field: string, value: string) => {
+    setFormData(prev => ({ ...prev, [field]: value }));
+  };
+
+  const handleFileChange = (field: string, file: File | null) => {
+    setFormData(prev => ({ ...prev, [field]: file }));
+  };
+
+  const handleSubmit = async (e: React.FormEvent) => {
+    e.preventDefault();
+    if (!user) return;
+
+    if (!formData.name || !formData.current_location || !formData.start_date || 
+        !formData.work_category || !formData.description) {
+      toast({
+        variant: "destructive",
+        title: "Campos obrigatórios",
+        description: "Por favor, preencha todos os campos obrigatórios.",
+      });
+      return;
+    }
+
+    setLoading(true);
+    try {
+      // Here you would typically upload files to storage and insert data to database
+      // For now, we'll just show the success message
+      
+      toast({
+        title: "Aplicação enviada com sucesso!",
+        description: "Seu perfil entrou em análise. Você será notificado em breve sobre o status da sua aplicação.",
+      });
+
+      // Reset form
+      setFormData({
+        name: '',
+        photo: null,
+        current_location: '',
+        start_date: '',
+        work_category: '',
+        description: '',
+        email: '',
+        phone: '',
+        website: '',
+        presentation_video: null,
+        additional_info: ''
+      });
+
+    } catch (error) {
+      toast({
+        variant: "destructive",
+        title: "Erro",
+        description: "Não foi possível enviar sua aplicação. Tente novamente.",
+      });
+    } finally {
+      setLoading(false);
+    }
+  };
+
+  if (!user) {
+    return (
+      <div className="min-h-screen bg-gradient-to-br from-background to-secondary/20">
+        <Header />
+        <div className="container mx-auto px-4 py-12">
+          <Card className="max-w-md mx-auto">
+            <CardHeader>
+              <CardTitle>Acesso negado</CardTitle>
+              <CardDescription>
+                Você precisa estar logado para acessar esta página.
+              </CardDescription>
+            </CardHeader>
+          </Card>
+        </div>
+      </div>
+    );
+  }
+
+  return (
+    <div className="min-h-screen bg-gradient-to-br from-background to-secondary/20">
+      <Header />
+      
+      <main className="container mx-auto px-4 py-8">
+        <div className="max-w-4xl mx-auto">
+          <div className="mb-6">
+            <Link 
+              to="/profile" 
+              className="inline-flex items-center gap-2 text-muted-foreground hover:text-foreground transition-colors"
+            >
+              <ArrowLeft className="w-4 h-4" />
+              Voltar ao perfil
+            </Link>
+          </div>
+
+          <Card>
+            <CardHeader>
+              <CardTitle className="text-2xl">Aplicação para Missionário</CardTitle>
+              <CardDescription>
+                Preencha as informações abaixo para se candidatar como missionário em nossa plataforma.
+                Os campos marcados com * são obrigatórios.
+              </CardDescription>
+            </CardHeader>
+            <CardContent>
+              <form onSubmit={handleSubmit} className="space-y-6">
+                <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
+                  <div className="space-y-2">
+                    <Label htmlFor="name">Nome *</Label>
+                    <Input
+                      id="name"
+                      type="text"
+                      value={formData.name}
+                      onChange={(e) => handleInputChange('name', e.target.value)}
+                      placeholder="Seu nome completo"
+                      required
+                    />
+                  </div>
+
+                  <div className="space-y-2">
+                    <Label htmlFor="photo">Foto de perfil</Label>
+                    <div className="flex items-center gap-2">
+                      <Input
+                        id="photo"
+                        type="file"
+                        accept="image/*"
+                        onChange={(e) => handleFileChange('photo', e.target.files?.[0] || null)}
+                        className="hidden"
+                      />
+                      <Button
+                        type="button"
+                        variant="outline"
+                        onClick={() => document.getElementById('photo')?.click()}
+                        className="w-full"
+                      >
+                        <Upload className="w-4 h-4 mr-2" />
+                        {formData.photo ? formData.photo.name : 'Escolher foto'}
+                      </Button>
+                    </div>
+                  </div>
+
+                  <div className="space-y-2">
+                    <Label htmlFor="location">Localização atual *</Label>
+                    <Input
+                      id="location"
+                      type="text"
+                      value={formData.current_location}
+                      onChange={(e) => handleInputChange('current_location', e.target.value)}
+                      placeholder="Cidade, Estado, País ou 'Não informado'"
+                      required
+                    />
+                  </div>
+
+                  <div className="space-y-2">
+                    <Label htmlFor="startDate">Data de início da atuação *</Label>
+                    <Input
+                      id="startDate"
+                      type="date"
+                      value={formData.start_date}
+                      onChange={(e) => handleInputChange('start_date', e.target.value)}
+                      required
+                    />
+                  </div>
+
+                  <div className="space-y-2 md:col-span-2">
+                    <Label htmlFor="category">Categoria do trabalho realizado *</Label>
+                    <Select 
+                      value={formData.work_category} 
+                      onValueChange={(value) => handleInputChange('work_category', value)}
+                    >
+                      <SelectTrigger>
+                        <SelectValue placeholder="Selecione uma categoria" />
+                      </SelectTrigger>
+                      <SelectContent>
+                        {workCategories.map((category) => (
+                          <SelectItem key={category} value={category}>
+                            {category}
+                          </SelectItem>
+                        ))}
+                      </SelectContent>
+                    </Select>
+                  </div>
+
+                  <div className="space-y-2 md:col-span-2">
+                    <Label htmlFor="description">Descrição do trabalho *</Label>
+                    <Textarea
+                      id="description"
+                      value={formData.description}
+                      onChange={(e) => handleInputChange('description', e.target.value)}
+                      placeholder="Descreva detalhadamente o trabalho missionário que você realiza..."
+                      className="min-h-[120px]"
+                      required
+                    />
+                  </div>
+
+                  <div className="space-y-2">
+                    <Label htmlFor="email">Email (opcional)</Label>
+                    <Input
+                      id="email"
+                      type="email"
+                      value={formData.email}
+                      onChange={(e) => handleInputChange('email', e.target.value)}
+                      placeholder="seu.email@exemplo.com"
+                    />
+                  </div>
+
+                  <div className="space-y-2">
+                    <Label htmlFor="phone">Telefone (opcional)</Label>
+                    <Input
+                      id="phone"
+                      type="tel"
+                      value={formData.phone}
+                      onChange={(e) => handleInputChange('phone', e.target.value)}
+                      placeholder="+55 (11) 99999-9999"
+                    />
+                  </div>
+
+                  <div className="space-y-2 md:col-span-2">
+                    <Label htmlFor="website">Site (opcional)</Label>
+                    <Input
+                      id="website"
+                      type="url"
+                      value={formData.website}
+                      onChange={(e) => handleInputChange('website', e.target.value)}
+                      placeholder="https://www.seusite.com"
+                    />
+                  </div>
+
+                  <div className="space-y-2 md:col-span-2">
+                    <Label htmlFor="video">Vídeo de apresentação (opcional)</Label>
+                    <div className="flex items-center gap-2">
+                      <Input
+                        id="video"
+                        type="file"
+                        accept="video/*"
+                        onChange={(e) => handleFileChange('presentation_video', e.target.files?.[0] || null)}
+                        className="hidden"
+                      />
+                      <Button
+                        type="button"
+                        variant="outline"
+                        onClick={() => document.getElementById('video')?.click()}
+                        className="w-full"
+                      >
+                        <Upload className="w-4 h-4 mr-2" />
+                        {formData.presentation_video ? formData.presentation_video.name : 'Escolher vídeo'}
+                      </Button>
+                    </div>
+                  </div>
+
+                  <div className="space-y-2 md:col-span-2">
+                    <Label htmlFor="additionalInfo">Outras experiências e motivações</Label>
+                    <Textarea
+                      id="additionalInfo"
+                      value={formData.additional_info}
+                      onChange={(e) => handleInputChange('additional_info', e.target.value)}
+                      placeholder="Conte-nos sobre outras experiências relevantes, suas motivações para o trabalho missionário, ou qualquer informação adicional que gostaria de compartilhar..."
+                      className="min-h-[120px]"
+                    />
+                  </div>
+                </div>
+
+                <div className="flex gap-4 pt-6">
+                  <Button type="submit" disabled={loading} className="flex-1">
+                    {loading ? 'Enviando...' : 'Enviar aplicação'}
+                  </Button>
+                  <Button 
+                    type="button" 
+                    variant="outline" 
+                    onClick={() => window.history.back()}
+                    className="flex-1"
+                  >
+                    Cancelar
+                  </Button>
+                </div>
+              </form>
+            </CardContent>
+          </Card>
+        </div>
+      </main>
+    </div>
+  );
+};
+
+export default MissionaryApplication;
