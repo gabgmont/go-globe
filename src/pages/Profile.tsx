@@ -10,7 +10,7 @@ import { Badge } from '@/components/ui/badge';
 import { AlertDialog, AlertDialogAction, AlertDialogCancel, AlertDialogContent, AlertDialogDescription, AlertDialogFooter, AlertDialogHeader, AlertDialogTitle, AlertDialogTrigger } from '@/components/ui/alert-dialog';
 import { supabase } from '@/integrations/supabase/client';
 import { useToast } from '@/hooks/use-toast';
-import { CalendarIcon, MapPin, Briefcase, Plus, X } from 'lucide-react';
+import { CalendarIcon, MapPin, Briefcase, Plus, X, Eye } from 'lucide-react';
 
 const Profile = () => {
   const { user, profile, signOut } = useAuth();
@@ -320,36 +320,46 @@ const Profile = () => {
                           Criada em {new Date(activeMission.created_at).toLocaleDateString('pt-BR')}
                         </CardDescription>
                       </div>
-                      <AlertDialog>
-                        <AlertDialogTrigger asChild>
-                          <Button
-                            variant="outline"
-                            size="sm"
-                            disabled={loading}
-                          >
-                            <X className="w-4 h-4 mr-2" />
-                            Encerrar missão
-                          </Button>
-                        </AlertDialogTrigger>
-                        <AlertDialogContent>
-                          <AlertDialogHeader>
-                            <AlertDialogTitle>Encerrar missão</AlertDialogTitle>
-                            <AlertDialogDescription>
-                              Tem certeza que deseja encerrar esta missão? Esta ação não pode ser desfeita.
-                            </AlertDialogDescription>
-                          </AlertDialogHeader>
-                          <AlertDialogFooter>
-                            <AlertDialogCancel>Cancelar</AlertDialogCancel>
-                            <AlertDialogAction
-                              onClick={handleEndMission}
+                      <div className="flex gap-2">
+                        <Button
+                          variant="outline"
+                          size="sm"
+                          onClick={() => window.location.href = `/missions/${activeMission.id}`}
+                        >
+                          <Eye className="w-4 h-4 mr-2" />
+                          Visualizar
+                        </Button>
+                        <AlertDialog>
+                          <AlertDialogTrigger asChild>
+                            <Button
+                              variant="outline"
+                              size="sm"
                               disabled={loading}
-                              className="bg-destructive text-destructive-foreground hover:bg-destructive/90"
                             >
-                              {loading ? 'Encerrando...' : 'Encerrar missão'}
-                            </AlertDialogAction>
-                          </AlertDialogFooter>
-                        </AlertDialogContent>
-                      </AlertDialog>
+                              <X className="w-4 h-4 mr-2" />
+                              Encerrar missão
+                            </Button>
+                          </AlertDialogTrigger>
+                          <AlertDialogContent>
+                            <AlertDialogHeader>
+                              <AlertDialogTitle>Encerrar missão</AlertDialogTitle>
+                              <AlertDialogDescription>
+                                Tem certeza que deseja encerrar esta missão? Esta ação não pode ser desfeita.
+                              </AlertDialogDescription>
+                            </AlertDialogHeader>
+                            <AlertDialogFooter>
+                              <AlertDialogCancel>Cancelar</AlertDialogCancel>
+                              <AlertDialogAction
+                                onClick={handleEndMission}
+                                disabled={loading}
+                                className="bg-destructive text-destructive-foreground hover:bg-destructive/90"
+                              >
+                                {loading ? 'Encerrando...' : 'Encerrar missão'}
+                              </AlertDialogAction>
+                            </AlertDialogFooter>
+                          </AlertDialogContent>
+                        </AlertDialog>
+                      </div>
                     </div>
                   </CardHeader>
                   <CardContent className="space-y-4">
