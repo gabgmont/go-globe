@@ -147,7 +147,7 @@ const MissionaryApplication = () => {
           website: formData.website || null,
           presentation_video_url: videoUrl,
           additional_info: formData.additional_info || null,
-          church_id: formData.church_id || null,
+          church_id: formData.church_id === 'none' ? null : formData.church_id || null,
           status: 'pending'
         });
 
@@ -314,7 +314,7 @@ const MissionaryApplication = () => {
                         <SelectValue placeholder="Selecione uma igreja (opcional)" />
                       </SelectTrigger>
                       <SelectContent>
-                        <SelectItem value="">Nenhuma igreja selecionada</SelectItem>
+                        <SelectItem value="none">Nenhuma igreja selecionada</SelectItem>
                         {churches.map((church) => (
                           <SelectItem key={church.id} value={church.id}>
                             {church.name}
