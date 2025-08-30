@@ -42,6 +42,7 @@ interface Project {
   financial_goal?: number;
   material_goal?: number;
   material_unit?: string;
+  image_url?: string;
 }
 
 const MissionEdit = () => {
@@ -65,7 +66,8 @@ const MissionEdit = () => {
     objective_type: '', 
     financial_goal: '', 
     material_goal: '', 
-    material_unit: '' 
+    material_unit: '',
+    image: null as File | null
   });
   const [showProgressDialog, setShowProgressDialog] = useState(false);
   const [showProjectDialog, setShowProjectDialog] = useState(false);
@@ -214,6 +216,26 @@ const MissionEdit = () => {
     if (!newProject.name || !user) return;
 
     try {
+      let imageUrl = null;
+
+      // Upload image if provided
+      if (newProject.image) {
+        const fileExt = newProject.image.name.split('.').pop();
+        const fileName = `${user.id}/${Date.now()}.${fileExt}`;
+        
+        const { error: uploadError } = await supabase.storage
+          .from('project-images')
+          .upload(fileName, newProject.image);
+
+        if (uploadError) throw uploadError;
+
+        const { data: { publicUrl } } = supabase.storage
+          .from('project-images')
+          .getPublicUrl(fileName);
+
+        imageUrl = publicUrl;
+      }
+
       const { data, error } = await supabase
         .from('mission_projects')
         .insert({
@@ -225,6 +247,7 @@ const MissionEdit = () => {
           financial_goal: newProject.objective_type === 'financial' ? parseFloat(newProject.financial_goal) || null : null,
           material_goal: newProject.objective_type === 'material' ? parseFloat(newProject.material_goal) || null : null,
           material_unit: newProject.objective_type === 'material' ? newProject.material_unit || null : null,
+          image_url: imageUrl,
         })
         .select()
         .single();
@@ -242,7 +265,8 @@ const MissionEdit = () => {
         objective_type: '', 
         financial_goal: '', 
         material_goal: '', 
-        material_unit: '' 
+        material_unit: '',
+        image: null
       });
       setShowProjectDialog(false);
       toast({
@@ -579,6 +603,23 @@ const MissionEdit = () => {
                         </div>
                       </>
                     )}
+                    <div className="space-y-2">
+                      <Label htmlFor="project-image">Imagem do Projeto (Opcional)</Label>
+                      <Input
+                        id="project-image"
+                        type="file"
+                        accept="image/*"
+                        onChange={(e) => {
+                          const file = e.target.files?.[0] || null;
+                          setNewProject({ ...newProject, image: file });
+                        }}
+                      />
+                      {newProject.image && (
+                        <p className="text-sm text-muted-foreground">
+                          Arquivo selecionado: {newProject.image.name}
+                        </p>
+                      )}
+                    </div>
                   </div>
                   <DialogFooter>
                     <Button variant="outline" onClick={() => setShowProjectDialog(false)}>
@@ -616,37 +657,46 @@ const MissionEdit = () => {
                         </div>
                       </div>
                     </CardHeader>
-                    <CardContent>
-                      {project.description && (
-                        <p className="text-sm mb-3">{project.description}</p>
-                      )}
-                      {project.objective_type && (
-                        <div className="space-y-2">
-                          <div className="flex items-center gap-2">
-                            <span className="text-sm font-medium">Objetivo:</span>
-                            <span className="text-sm capitalize">
-                              {project.objective_type === 'financial' ? 'Financeiro' : 'Material'}
-                            </span>
-                          </div>
-                          {project.objective_type === 'financial' && project.financial_goal && (
-                            <div className="flex items-center gap-2">
-                              <span className="text-sm font-medium">Meta Financeira:</span>
-                              <span className="text-sm">
-                                R$ {project.financial_goal.toLocaleString('pt-BR', { minimumFractionDigits: 2 })}
-                              </span>
-                            </div>
-                          )}
-                          {project.objective_type === 'material' && project.material_goal && (
-                            <div className="flex items-center gap-2">
-                              <span className="text-sm font-medium">Meta:</span>
-                              <span className="text-sm">
-                                {project.material_goal} {project.material_unit || 'unidades'}
-                              </span>
-                            </div>
-                          )}
-                        </div>
-                      )}
-                    </CardContent>
+                     <CardContent>
+                       {project.image_url && (
+                         <div className="mb-4">
+                           <img 
+                             src={project.image_url} 
+                             alt={project.name}
+                             className="w-full h-48 object-cover rounded-md"
+                           />
+                         </div>
+                       )}
+                       {project.description && (
+                         <p className="text-sm mb-3">{project.description}</p>
+                       )}
+                       {project.objective_type && (
+                         <div className="space-y-2">
+                           <div className="flex items-center gap-2">
+                             <span className="text-sm font-medium">Objetivo:</span>
+                             <span className="text-sm capitalize">
+                               {project.objective_type === 'financial' ? 'Financeiro' : 'Material'}
+                             </span>
+                           </div>
+                           {project.objective_type === 'financial' && project.financial_goal && (
+                             <div className="flex items-center gap-2">
+                               <span className="text-sm font-medium">Meta Financeira:</span>
+                               <span className="text-sm">
+                                 R$ {project.financial_goal.toLocaleString('pt-BR', { minimumFractionDigits: 2 })}
+                               </span>
+                             </div>
+                           )}
+                           {project.objective_type === 'material' && project.material_goal && (
+                             <div className="flex items-center gap-2">
+                               <span className="text-sm font-medium">Meta:</span>
+                               <span className="text-sm">
+                                 {project.material_goal} {project.material_unit || 'unidades'}
+                               </span>
+                             </div>
+                           )}
+                         </div>
+                       )}
+                     </CardContent>
                   </Card>
                 ))
               )}
