@@ -146,6 +146,11 @@ export const AuthProvider = ({ children }: { children: ReactNode }) => {
   const signOut = async () => {
     try {
       await supabase.auth.signOut();
+      
+      // Reset CSS variables to original theme colors
+      document.documentElement.style.removeProperty('--primary');
+      document.documentElement.style.removeProperty('--secondary');
+      
       toast({
         title: "Logout realizado",
         description: "Até logo!",
