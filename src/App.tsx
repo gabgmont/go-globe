@@ -8,6 +8,7 @@ import Index from "./pages/Index";
 import MissionaryProfile from "./pages/MissionaryProfile";
 import Profile from "./pages/Profile";
 import MissionaryApplication from "./pages/MissionaryApplication";
+import NewMission from "./pages/NewMission";
 import NotFound from "./pages/NotFound";
 
 const queryClient = new QueryClient();
@@ -24,6 +25,7 @@ const App = () => (
             <Route path="/missionary/:id" element={<MissionaryProfile />} />
             <Route path="/profile" element={<Profile />} />
             <Route path="/missionary-application" element={<MissionaryApplication />} />
+            <Route path="/new-mission" element={<NewMission />} />
             {/* ADD ALL CUSTOM ROUTES ABOVE THE CATCH-ALL "*" ROUTE */}
             <Route path="*" element={<NotFound />} />
           </Routes>

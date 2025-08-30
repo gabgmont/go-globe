@@ -9,7 +9,7 @@ import { Avatar, AvatarFallback, AvatarImage } from '@/components/ui/avatar';
 import { Badge } from '@/components/ui/badge';
 import { supabase } from '@/integrations/supabase/client';
 import { useToast } from '@/hooks/use-toast';
-import { CalendarIcon, MapPin, Briefcase, Plus } from 'lucide-react';
+import { CalendarIcon, MapPin, Briefcase, Plus, X } from 'lucide-react';
 
 const Profile = () => {
   const { user, profile, signOut } = useAuth();
@@ -17,11 +17,14 @@ const Profile = () => {
   const [loading, setLoading] = useState(false);
   const [missionaryApplication, setMissionaryApplication] = useState<any>(null);
   const [loadingApplication, setLoadingApplication] = useState(true);
+  const [activeMission, setActiveMission] = useState<any>(null);
+  const [loadingMission, setLoadingMission] = useState(true);
   const { toast } = useToast();
 
   useEffect(() => {
     if (user) {
       fetchMissionaryApplication();
+      fetchActiveMission();
     }
   }, [user]);
 
@@ -49,6 +52,31 @@ const Profile = () => {
     }
   };
 
+  const fetchActiveMission = async () => {
+    if (!user) return;
+
+    try {
+      const { data, error } = await supabase
+        .from('missions')
+        .select('*')
+        .eq('user_id', user.id)
+        .eq('status', 'active')
+        .order('created_at', { ascending: false })
+        .limit(1)
+        .maybeSingle();
+
+      if (error && error.code !== 'PGRST116') {
+        console.error('Error fetching active mission:', error);
+      } else {
+        setActiveMission(data);
+      }
+    } catch (error) {
+      console.error('Error fetching active mission:', error);
+    } finally {
+      setLoadingMission(false);
+    }
+  };
+
   const getStatusBadge = (status: string) => {
     const statusConfig = {
       pending: { label: 'Em análise', variant: 'secondary' as const },
@@ -58,6 +86,36 @@ const Profile = () => {
 
     const config = statusConfig[status as keyof typeof statusConfig] || statusConfig.pending;
     return <Badge variant={config.variant}>{config.label}</Badge>;
+  };
+
+  const handleEndMission = async () => {
+    if (!user || !activeMission) return;
+
+    setLoading(true);
+    try {
+      const { error } = await supabase
+        .from('missions')
+        .update({ status: 'completed' })
+        .eq('id', activeMission.id);
+
+      if (error) throw error;
+
+      toast({
+        title: "Missão encerrada",
+        description: "Sua missão foi encerrada com sucesso.",
+      });
+
+      // Atualizar a missão ativa
+      setActiveMission(null);
+    } catch (error) {
+      toast({
+        variant: "destructive",
+        title: "Erro",
+        description: "Não foi possível encerrar a missão.",
+      });
+    } finally {
+      setLoading(false);
+    }
   };
 
   const handleUpdateProfile = async (e: React.FormEvent) => {
@@ -236,26 +294,86 @@ const Profile = () => {
                 </CardContent>
               </Card>
 
-              <Card>
-                <CardHeader>
-                  <CardTitle className="flex items-center gap-2">
-                    <Plus className="w-5 h-5" />
-                    Novo Projeto
-                  </CardTitle>
-                  <CardDescription>
-                    Compartilhe um novo projeto ou trabalho missionário
-                  </CardDescription>
-                </CardHeader>
-                <CardContent>
-                  <Button 
-                    onClick={() => window.location.href = '/missionary-application'}
-                    className="w-full"
-                    variant="outline"
-                  >
-                    Adicionar novo projeto
-                  </Button>
-                </CardContent>
-              </Card>
+              {loadingMission ? (
+                <Card>
+                  <CardContent className="p-6">
+                    <div className="text-center text-muted-foreground">
+                      Carregando informações da missão...
+                    </div>
+                  </CardContent>
+                </Card>
+              ) : activeMission ? (
+                <Card>
+                  <CardHeader>
+                    <div className="flex items-start justify-between">
+                      <div>
+                        <CardTitle>{activeMission.name}</CardTitle>
+                        <CardDescription>
+                          Criada em {new Date(activeMission.created_at).toLocaleDateString('pt-BR')}
+                        </CardDescription>
+                      </div>
+                      <Button
+                        variant="outline"
+                        size="sm"
+                        onClick={handleEndMission}
+                        disabled={loading}
+                      >
+                        <X className="w-4 h-4 mr-2" />
+                        Encerrar missão
+                      </Button>
+                    </div>
+                  </CardHeader>
+                  <CardContent className="space-y-4">
+                    <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
+                      <div className="flex items-center gap-2">
+                        <Briefcase className="w-4 h-4 text-muted-foreground" />
+                        <span className="text-sm">{activeMission.category}</span>
+                      </div>
+                      {activeMission.location && (
+                        <div className="flex items-center gap-2">
+                          <MapPin className="w-4 h-4 text-muted-foreground" />
+                          <span className="text-sm">{activeMission.location}</span>
+                        </div>
+                      )}
+                    </div>
+                    
+                    <div>
+                      <h4 className="font-medium mb-2">Sobre a missão:</h4>
+                      <p className="text-sm text-muted-foreground">
+                        {activeMission.about}
+                      </p>
+                    </div>
+
+                    <div>
+                      <h4 className="font-medium mb-2">Objetivos:</h4>
+                      <p className="text-sm text-muted-foreground">
+                        {activeMission.objectives}
+                      </p>
+                    </div>
+                  </CardContent>
+                </Card>
+              ) : (
+                <Card>
+                  <CardHeader>
+                    <CardTitle className="flex items-center gap-2">
+                      <Plus className="w-5 h-5" />
+                      Nova Missão
+                    </CardTitle>
+                    <CardDescription>
+                      Compartilhe uma nova missão ou trabalho missionário
+                    </CardDescription>
+                  </CardHeader>
+                  <CardContent>
+                    <Button 
+                      onClick={() => window.location.href = '/new-mission'}
+                      className="w-full"
+                      variant="outline"
+                    >
+                      Criar nova missão
+                    </Button>
+                  </CardContent>
+                </Card>
+              )}
             </div>
           ) : (
             <Card>

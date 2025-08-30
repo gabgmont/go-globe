@@ -71,6 +71,45 @@ export type Database = {
         }
         Relationships: []
       }
+      missions: {
+        Row: {
+          about: string
+          category: string
+          created_at: string
+          id: string
+          location: string | null
+          name: string
+          objectives: string
+          status: string
+          updated_at: string
+          user_id: string
+        }
+        Insert: {
+          about: string
+          category: string
+          created_at?: string
+          id?: string
+          location?: string | null
+          name: string
+          objectives: string
+          status?: string
+          updated_at?: string
+          user_id: string
+        }
+        Update: {
+          about?: string
+          category?: string
+          created_at?: string
+          id?: string
+          location?: string | null
+          name?: string
+          objectives?: string
+          status?: string
+          updated_at?: string
+          user_id?: string
+        }
+        Relationships: []
+      }
       profiles: {
         Row: {
           avatar_url: string | null
