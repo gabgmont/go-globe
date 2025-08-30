@@ -24,7 +24,7 @@ export const Header = () => {
           <Link to="/" className="flex items-center gap-3 hover:opacity-80 transition-opacity cursor-pointer">
             <div className="bg-background/10 p-2 rounded-lg backdrop-blur-sm">
               <img 
-                src="/lovable-uploads/75305020-855e-4f4b-a721-0c766560a340.png" 
+                src="/lovable-uploads/689fa863-e036-4108-8688-3600761b4c59.png" 
                 alt="World Mission Link Logo" 
                 className="w-8 h-8 object-contain bg-transparent" 
               />
