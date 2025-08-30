@@ -14,6 +14,42 @@ export type Database = {
   }
   public: {
     Tables: {
+      churches: {
+        Row: {
+          created_at: string
+          email: string
+          id: string
+          logo_url: string | null
+          name: string
+          primary_color: string | null
+          secondary_color: string | null
+          updated_at: string
+          user_id: string
+        }
+        Insert: {
+          created_at?: string
+          email: string
+          id?: string
+          logo_url?: string | null
+          name: string
+          primary_color?: string | null
+          secondary_color?: string | null
+          updated_at?: string
+          user_id: string
+        }
+        Update: {
+          created_at?: string
+          email?: string
+          id?: string
+          logo_url?: string | null
+          name?: string
+          primary_color?: string | null
+          secondary_color?: string | null
+          updated_at?: string
+          user_id?: string
+        }
+        Relationships: []
+      }
       mission_progress: {
         Row: {
           created_at: string
@@ -92,6 +128,7 @@ export type Database = {
       missionary_applications: {
         Row: {
           additional_info: string | null
+          church_id: string | null
           created_at: string
           current_location: string
           description: string
@@ -110,6 +147,7 @@ export type Database = {
         }
         Insert: {
           additional_info?: string | null
+          church_id?: string | null
           created_at?: string
           current_location: string
           description: string
@@ -128,6 +166,7 @@ export type Database = {
         }
         Update: {
           additional_info?: string | null
+          church_id?: string | null
           created_at?: string
           current_location?: string
           description?: string
@@ -144,7 +183,15 @@ export type Database = {
           website?: string | null
           work_category?: string
         }
-        Relationships: []
+        Relationships: [
+          {
+            foreignKeyName: "missionary_applications_church_id_fkey"
+            columns: ["church_id"]
+            isOneToOne: false
+            referencedRelation: "churches"
+            referencedColumns: ["id"]
+          },
+        ]
       }
       missions: {
         Row: {

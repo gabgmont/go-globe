@@ -1,4 +1,4 @@
-import { useState } from 'react';
+import { useState, useEffect } from 'react';
 import { useAuth } from '@/hooks/useAuth';
 import { Header } from '@/components/Header';
 import { Button } from '@/components/ui/button';
@@ -16,6 +16,7 @@ const MissionaryApplication = () => {
   const { user } = useAuth();
   const { toast } = useToast();
   const [loading, setLoading] = useState(false);
+  const [churches, setChurches] = useState<Array<{id: string; name: string}>>([]);
   const [formData, setFormData] = useState({
     name: '',
     photo: null as File | null,
@@ -27,7 +28,8 @@ const MissionaryApplication = () => {
     phone: '',
     website: '',
     presentation_video: null as File | null,
-    additional_info: ''
+    additional_info: '',
+    church_id: ''
   });
 
   const workCategories = [
@@ -42,6 +44,24 @@ const MissionaryApplication = () => {
     'Ministério Jovem',
     'Outro'
   ];
+
+  useEffect(() => {
+    fetchChurches();
+  }, []);
+
+  const fetchChurches = async () => {
+    try {
+      const { data, error } = await supabase
+        .from('churches')
+        .select('id, name')
+        .order('name');
+      
+      if (error) throw error;
+      setChurches(data || []);
+    } catch (error) {
+      console.error('Error fetching churches:', error);
+    }
+  };
 
   const handleInputChange = (field: string, value: string) => {
     setFormData(prev => ({ ...prev, [field]: value }));
@@ -127,6 +147,7 @@ const MissionaryApplication = () => {
           website: formData.website || null,
           presentation_video_url: videoUrl,
           additional_info: formData.additional_info || null,
+          church_id: formData.church_id || null,
           status: 'pending'
         });
 
@@ -149,7 +170,8 @@ const MissionaryApplication = () => {
         phone: '',
         website: '',
         presentation_video: null,
-        additional_info: ''
+        additional_info: '',
+        church_id: ''
       });
 
     } catch (error: any) {
@@ -279,6 +301,23 @@ const MissionaryApplication = () => {
                         {workCategories.map((category) => (
                           <SelectItem key={category} value={category}>
                             {category}
+                          </SelectItem>
+                        ))}
+                      </SelectContent>
+                    </Select>
+                  </div>
+
+                  <div className="space-y-2 md:col-span-2">
+                    <Label htmlFor="church_id">Igreja Vinculada (opcional)</Label>
+                    <Select value={formData.church_id} onValueChange={(value) => handleInputChange('church_id', value)}>
+                      <SelectTrigger>
+                        <SelectValue placeholder="Selecione uma igreja (opcional)" />
+                      </SelectTrigger>
+                      <SelectContent>
+                        <SelectItem value="">Nenhuma igreja selecionada</SelectItem>
+                        {churches.map((church) => (
+                          <SelectItem key={church.id} value={church.id}>
+                            {church.name}
                           </SelectItem>
                         ))}
                       </SelectContent>

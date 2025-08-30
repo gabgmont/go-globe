@@ -6,10 +6,12 @@ import { Link, useNavigate } from "react-router-dom";
 import { Avatar, AvatarFallback, AvatarImage } from "@/components/ui/avatar";
 import { DropdownMenu, DropdownMenuContent, DropdownMenuItem, DropdownMenuTrigger } from "@/components/ui/dropdown-menu";
 import { LoginModal } from "./LoginModal";
+import { ChurchSignupModal } from "./ChurchSignupModal";
 import { useAuth } from "@/hooks/useAuth";
 
 export const Header = () => {
   const [loginModalOpen, setLoginModalOpen] = useState(false);
+  const [churchSignupModalOpen, setChurchSignupModalOpen] = useState(false);
   const { user, profile, signOut } = useAuth();
   const navigate = useNavigate();
 
@@ -73,14 +75,24 @@ export const Header = () => {
                 </DropdownMenuContent>
               </DropdownMenu>
             ) : (
-              <Button 
-                variant="secondary" 
-                size="sm"
-                onClick={() => setLoginModalOpen(true)}
-              >
-                <LogIn className="w-4 h-4" />
-                <span className="hidden sm:inline ml-2">Entrar</span>
-              </Button>
+              <div className="flex gap-2">
+                <Button 
+                  onClick={() => setChurchSignupModalOpen(true)} 
+                  variant="outline"
+                  size="sm"
+                >
+                  <span className="hidden sm:inline">Cadastrar minha igreja</span>
+                  <span className="sm:hidden">Igreja</span>
+                </Button>
+                <Button 
+                  onClick={() => setLoginModalOpen(true)} 
+                  variant="secondary"
+                  size="sm"
+                >
+                  <LogIn className="w-4 h-4" />
+                  <span className="hidden sm:inline ml-2">Entrar</span>
+                </Button>
+              </div>
             )}
           </div>
         </div>
@@ -100,6 +112,11 @@ export const Header = () => {
       <LoginModal 
         open={loginModalOpen} 
         onOpenChange={setLoginModalOpen} 
+      />
+      
+      <ChurchSignupModal 
+        open={churchSignupModalOpen} 
+        onOpenChange={setChurchSignupModalOpen} 
       />
     </header>
   );
