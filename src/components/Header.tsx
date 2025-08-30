@@ -1,7 +1,7 @@
 import { useState } from "react";
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
-import { Search, Globe, LogIn, User } from "lucide-react";
+import { Search, LogIn, User } from "lucide-react";
 import { Link, useNavigate } from "react-router-dom";
 import { Avatar, AvatarFallback, AvatarImage } from "@/components/ui/avatar";
 import { DropdownMenu, DropdownMenuContent, DropdownMenuItem, DropdownMenuTrigger } from "@/components/ui/dropdown-menu";
@@ -23,7 +23,11 @@ export const Header = () => {
         <div className="flex items-center justify-between">
           <Link to="/" className="flex items-center gap-3 hover:opacity-80 transition-opacity cursor-pointer">
             <div className="bg-background/10 p-2 rounded-lg backdrop-blur-sm">
-              <Globe className="w-8 h-8" />
+              <img 
+                src="/lovable-uploads/a48889e6-6717-4279-bcfb-d6190b1063eb.png" 
+                alt="World Mission Link Logo" 
+                className="w-8 h-8 object-contain bg-transparent" 
+              />
             </div>
             <div>
               <h1 className="text-2xl font-bold">World Mission Link</h1>
