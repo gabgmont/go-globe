@@ -41,7 +41,6 @@ interface Project {
   objective_type?: 'financial' | 'material';
   financial_goal?: number;
   material_goal?: number;
-  material_unit?: string;
   image_url?: string;
 }
 
@@ -66,7 +65,6 @@ const MissionEdit = () => {
     objective_type: '', 
     financial_goal: '', 
     material_goal: '', 
-    material_unit: '',
     image: null as File | null
   });
   const [showProgressDialog, setShowProgressDialog] = useState(false);
@@ -246,7 +244,6 @@ const MissionEdit = () => {
           objective_type: newProject.objective_type || null,
           financial_goal: newProject.objective_type === 'financial' ? parseFloat(newProject.financial_goal) || null : null,
           material_goal: newProject.objective_type === 'material' ? parseFloat(newProject.material_goal) || null : null,
-          material_unit: newProject.objective_type === 'material' ? newProject.material_unit || null : null,
           image_url: imageUrl,
         })
         .select()
@@ -265,7 +262,6 @@ const MissionEdit = () => {
         objective_type: '', 
         financial_goal: '', 
         material_goal: '', 
-        material_unit: '',
         image: null
       });
       setShowProjectDialog(false);
@@ -592,15 +588,6 @@ const MissionEdit = () => {
                             placeholder="Digite a quantidade meta"
                           />
                         </div>
-                        <div className="space-y-2">
-                          <Label htmlFor="material-unit">Unidade do Material</Label>
-                          <Input
-                            id="material-unit"
-                            value={newProject.material_unit}
-                            onChange={(e) => setNewProject({ ...newProject, material_unit: e.target.value })}
-                            placeholder="Ex: kg, unidades, litros"
-                          />
-                        </div>
                       </>
                     )}
                     <div className="space-y-2">
@@ -690,7 +677,7 @@ const MissionEdit = () => {
                              <div className="flex items-center gap-2">
                                <span className="text-sm font-medium">Meta:</span>
                                <span className="text-sm">
-                                 {project.material_goal} {project.material_unit || 'unidades'}
+                                 {project.material_goal} unidades
                                </span>
                              </div>
                            )}

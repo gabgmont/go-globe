@@ -52,7 +52,6 @@ export type Database = {
           id: string
           image_url: string | null
           material_goal: number | null
-          material_unit: string | null
           mission_id: string
           name: string
           objective_type: string | null
@@ -67,7 +66,6 @@ export type Database = {
           id?: string
           image_url?: string | null
           material_goal?: number | null
-          material_unit?: string | null
           mission_id: string
           name: string
           objective_type?: string | null
@@ -82,7 +80,6 @@ export type Database = {
           id?: string
           image_url?: string | null
           material_goal?: number | null
-          material_unit?: string | null
           mission_id?: string
           name?: string
           objective_type?: string | null
