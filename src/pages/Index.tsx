@@ -12,14 +12,14 @@ import { Badge } from "@/components/ui/badge";
 import { Carousel, CarouselContent, CarouselItem, CarouselPrevious, CarouselNext } from "@/components/ui/carousel";
 import { ArrowRight, Globe, Target, Users, Heart } from "lucide-react";
 import { useMissionProjects } from "@/hooks/useMissionProjects";
+import { useMissionaries } from "@/hooks/useMissionaries";
 import heroImage from "@/assets/hero-missions.jpg";
-import missionary1 from "@/assets/missionary-1.jpg";
-import missionary2 from "@/assets/missionary-2.jpg";
 
 const Index = () => {
   const [activeTab, setActiveTab] = useState('inicio');
   const [activeFilters, setActiveFilters] = useState<string[]>([]);
   const { projects, loading: projectsLoading } = useMissionProjects();
+  const { missionaries, loading: missionariesLoading } = useMissionaries();
 
   // Mock data
   const featuredProjects = [
@@ -56,32 +56,6 @@ const Index = () => {
     }
   ];
 
-  const featuredMissionaries = [
-    {
-      id: '1',
-      name: 'Maria Silva',
-      location: 'Maputo, Moçambique',
-      mission: 'Desenvolvimento de programas educacionais e capacitação de professores em comunidades rurais.',
-      startDate: '2022',
-      supporters: 45,
-      monthlySupport: 8500,
-      avatar: missionary1,
-      specialization: 'Educação',
-      status: 'active' as const
-    },
-    {
-      id: '2',
-      name: 'João Santos',
-      location: 'La Paz, Bolívia',
-      mission: 'Estabelecimento de centro médico e treinamento de agentes comunitários de saúde.',
-      startDate: '2023',
-      supporters: 32,
-      monthlySupport: 6200,
-      avatar: missionary2,
-      specialization: 'Saúde',
-      status: 'active' as const
-    }
-  ];
 
   const renderContent = () => {
     switch (activeTab) {
@@ -207,11 +181,29 @@ const Index = () => {
                   <ArrowRight className="w-4 h-4" />
                 </Button>
               </div>
-              <div className="grid md:grid-cols-2 lg:grid-cols-4 gap-6">
-                {featuredMissionaries.map((missionary) => (
-                  <MissionaryCard key={missionary.id} {...missionary} />
-                ))}
-              </div>
+              {missionariesLoading ? (
+                <div className="grid md:grid-cols-2 lg:grid-cols-4 gap-6">
+                  {[...Array(4)].map((_, i) => (
+                    <div key={i} className="animate-pulse">
+                      <div className="bg-muted h-64 rounded-lg mb-4"></div>
+                      <div className="space-y-2">
+                        <div className="bg-muted h-4 rounded w-3/4"></div>
+                        <div className="bg-muted h-3 rounded w-1/2"></div>
+                      </div>
+                    </div>
+                  ))}
+                </div>
+              ) : missionaries.length > 0 ? (
+                <div className="grid md:grid-cols-2 lg:grid-cols-4 gap-6">
+                  {missionaries.slice(0, 4).map((missionary) => (
+                    <MissionaryCard key={missionary.id} {...missionary} />
+                  ))}
+                </div>
+              ) : (
+                <div className="text-center py-12">
+                  <p className="text-muted-foreground">Nenhum missionário encontrado no momento.</p>
+                </div>
+              )}
             </section>
           </div>
         );
@@ -263,11 +255,29 @@ const Index = () => {
                 <h2 className="text-3xl font-bold mb-2">Nossos Missionários</h2>
                 <p className="text-muted-foreground">Conheça e apoie nossos missionários</p>
               </div>
-              <div className="grid md:grid-cols-2 lg:grid-cols-4 gap-6">
-                {featuredMissionaries.map((missionary) => (
-                  <MissionaryCard key={missionary.id} {...missionary} />
-                ))}
-              </div>
+              {missionariesLoading ? (
+                <div className="grid md:grid-cols-2 lg:grid-cols-4 gap-6">
+                  {[...Array(8)].map((_, i) => (
+                    <div key={i} className="animate-pulse">
+                      <div className="bg-muted h-64 rounded-lg mb-4"></div>
+                      <div className="space-y-2">
+                        <div className="bg-muted h-4 rounded w-3/4"></div>
+                        <div className="bg-muted h-3 rounded w-1/2"></div>
+                      </div>
+                    </div>
+                  ))}
+                </div>
+              ) : missionaries.length > 0 ? (
+                <div className="grid md:grid-cols-2 lg:grid-cols-4 gap-6">
+                  {missionaries.map((missionary) => (
+                    <MissionaryCard key={missionary.id} {...missionary} />
+                  ))}
+                </div>
+              ) : (
+                <div className="text-center py-12">
+                  <p className="text-muted-foreground">Nenhum missionário encontrado no momento.</p>
+                </div>
+              )}
             </div>
           </div>
         );
