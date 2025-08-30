@@ -152,6 +152,22 @@ export const useChurch = () => {
     logoFile?: File
   ) => {
     try {
+      // Verificar se já existe uma instituição com o mesmo nome
+      const { data: existingChurch } = await supabase
+        .from('churches')
+        .select('id')
+        .ilike('name', name.trim())
+        .maybeSingle();
+
+      if (existingChurch) {
+        toast({
+          variant: "destructive",
+          title: "Nome já utilizado",
+          description: "Já existe uma instituição cadastrada com este nome. Por favor, escolha outro nome.",
+        });
+        return { error: { message: "Nome já utilizado" } };
+      }
+
       let logoUrl = null;
 
       // Upload logo if provided
@@ -180,7 +196,7 @@ export const useChurch = () => {
           emailRedirectTo: `${window.location.origin}/`,
           data: {
             user_type: 'church',
-            church_name: name,
+            church_name: name.trim(),
             primary_color: primaryColor,
             secondary_color: secondaryColor,
             logo_url: logoUrl,
@@ -189,11 +205,20 @@ export const useChurch = () => {
       });
 
       if (error) {
-        toast({
-          variant: "destructive",
-          title: "Erro no cadastro",
-          description: error.message,
-        });
+        // Tratar erro específico de email já utilizado
+        if (error.message.includes('already registered')) {
+          toast({
+            variant: "destructive",
+            title: "Email já utilizado",
+            description: "Este email já está cadastrado. Tente fazer login ou use outro email.",
+          });
+        } else {
+          toast({
+            variant: "destructive",
+            title: "Erro no cadastro",
+            description: error.message,
+          });
+        }
       } else {
         toast({
           title: "Cadastro realizado",
@@ -206,7 +231,22 @@ export const useChurch = () => {
       }
 
       return { error };
-    } catch (error) {
+    } catch (error: any) {
+      // Tratar erro de constraint de nome único
+      if (error.code === '23505' && error.constraint === 'unique_church_name') {
+        toast({
+          variant: "destructive",
+          title: "Nome já utilizado",
+          description: "Já existe uma instituição cadastrada com este nome. Por favor, escolha outro nome.",
+        });
+        return { error: { message: "Nome já utilizado" } };
+      }
+      
+      toast({
+        variant: "destructive",
+        title: "Erro no cadastro",
+        description: "Ocorreu um erro inesperado. Tente novamente.",
+      });
       return { error };
     }
   };
