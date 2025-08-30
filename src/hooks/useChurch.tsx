@@ -197,8 +197,12 @@ export const useChurch = () => {
       } else {
         toast({
           title: "Cadastro realizado",
-          description: "Verifique seu email para confirmar a conta da instituição.",
+          description: "Instituição cadastrada com sucesso! Redirecionando...",
         });
+        // Redirecionar automaticamente para o perfil da instituição
+        setTimeout(() => {
+          window.location.href = '/church-profile';
+        }, 1500);
       }
 
       return { error };
