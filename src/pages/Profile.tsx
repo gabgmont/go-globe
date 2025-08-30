@@ -1,4 +1,5 @@
 import { useState, useEffect } from 'react';
+import { useNavigate } from 'react-router-dom';
 import { useAuth } from '@/hooks/useAuth';
 import { Header } from '@/components/Header';
 import { Button } from '@/components/ui/button';
@@ -13,6 +14,7 @@ import { useToast } from '@/hooks/use-toast';
 import { CalendarIcon, MapPin, Briefcase, Plus, X, Eye } from 'lucide-react';
 
 const Profile = () => {
+  const navigate = useNavigate();
   const { user, profile, signOut } = useAuth();
   const [displayName, setDisplayName] = useState(profile?.display_name || '');
   const [loading, setLoading] = useState(false);
@@ -324,7 +326,7 @@ const Profile = () => {
                         <Button
                           variant="outline"
                           size="sm"
-                          onClick={() => window.location.href = `/missions/${activeMission.id}`}
+                          onClick={() => navigate(`/mission/${activeMission.id}`)}
                         >
                           <Eye className="w-4 h-4 mr-2" />
                           Visualizar
