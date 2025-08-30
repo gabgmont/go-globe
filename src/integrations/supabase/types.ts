@@ -14,6 +14,63 @@ export type Database = {
   }
   public: {
     Tables: {
+      missionary_applications: {
+        Row: {
+          additional_info: string | null
+          created_at: string
+          current_location: string
+          description: string
+          email: string | null
+          id: string
+          name: string
+          phone: string | null
+          photo_url: string | null
+          presentation_video_url: string | null
+          start_date: string
+          status: string
+          updated_at: string
+          user_id: string
+          website: string | null
+          work_category: string
+        }
+        Insert: {
+          additional_info?: string | null
+          created_at?: string
+          current_location: string
+          description: string
+          email?: string | null
+          id?: string
+          name: string
+          phone?: string | null
+          photo_url?: string | null
+          presentation_video_url?: string | null
+          start_date: string
+          status?: string
+          updated_at?: string
+          user_id: string
+          website?: string | null
+          work_category: string
+        }
+        Update: {
+          additional_info?: string | null
+          created_at?: string
+          current_location?: string
+          description?: string
+          email?: string | null
+          id?: string
+          name?: string
+          phone?: string | null
+          photo_url?: string | null
+          presentation_video_url?: string | null
+          start_date?: string
+          status?: string
+          updated_at?: string
+          user_id?: string
+          website?: string | null
+          work_category?: string
+        }
+        Relationships: []
+      }
       profiles: {
         Row: {
           avatar_url: string | null

@@ -51,6 +51,31 @@ const MissionaryApplication = () => {
     setFormData(prev => ({ ...prev, [field]: file }));
   };
 
+  const uploadFile = async (file: File, bucket: string, folder: string): Promise<string | null> => {
+    const fileExtension = file.name.split('.').pop();
+    const fileName = `${folder}/${user!.id}/${Date.now()}.${fileExtension}`;
+    
+    const { data, error } = await supabase.storage
+      .from(bucket)
+      .upload(fileName, file);
+
+    if (error) {
+      console.error('Upload error:', error);
+      return null;
+    }
+
+    if (bucket === 'missionary-photos') {
+      // For public bucket, return the public URL
+      const { data: { publicUrl } } = supabase.storage
+        .from(bucket)
+        .getPublicUrl(fileName);
+      return publicUrl;
+    } else {
+      // For private bucket, return the file path
+      return fileName;
+    }
+  };
+
   const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault();
     if (!user) return;
@@ -67,8 +92,45 @@ const MissionaryApplication = () => {
 
     setLoading(true);
     try {
-      // Here you would typically upload files to storage and insert data to database
-      // For now, we'll just show the success message
+      let photoUrl = null;
+      let videoUrl = null;
+
+      // Upload photo if provided
+      if (formData.photo) {
+        photoUrl = await uploadFile(formData.photo, 'missionary-photos', 'profile-photos');
+        if (!photoUrl) {
+          throw new Error('Falha no upload da foto');
+        }
+      }
+
+      // Upload video if provided
+      if (formData.presentation_video) {
+        videoUrl = await uploadFile(formData.presentation_video, 'missionary-videos', 'presentation-videos');
+        if (!videoUrl) {
+          throw new Error('Falha no upload do vídeo');
+        }
+      }
+
+      // Insert missionary application data
+      const { error } = await supabase
+        .from('missionary_applications')
+        .insert({
+          user_id: user.id,
+          name: formData.name,
+          photo_url: photoUrl,
+          current_location: formData.current_location,
+          start_date: formData.start_date,
+          work_category: formData.work_category,
+          description: formData.description,
+          email: formData.email || null,
+          phone: formData.phone || null,
+          website: formData.website || null,
+          presentation_video_url: videoUrl,
+          additional_info: formData.additional_info || null,
+          status: 'pending'
+        });
+
+      if (error) throw error;
       
       toast({
         title: "Aplicação enviada com sucesso!",
@@ -90,11 +152,12 @@ const MissionaryApplication = () => {
         additional_info: ''
       });
 
-    } catch (error) {
+    } catch (error: any) {
+      console.error('Submission error:', error);
       toast({
         variant: "destructive",
         title: "Erro",
-        description: "Não foi possível enviar sua aplicação. Tente novamente.",
+        description: error.message || "Não foi possível enviar sua aplicação. Tente novamente.",
       });
     } finally {
       setLoading(false);
