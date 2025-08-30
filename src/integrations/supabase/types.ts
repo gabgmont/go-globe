@@ -48,9 +48,13 @@ export type Database = {
         Row: {
           created_at: string
           description: string | null
+          financial_goal: number | null
           id: string
+          material_goal: number | null
+          material_unit: string | null
           mission_id: string
           name: string
+          objective_type: string | null
           status: string
           updated_at: string
           user_id: string
@@ -58,9 +62,13 @@ export type Database = {
         Insert: {
           created_at?: string
           description?: string | null
+          financial_goal?: number | null
           id?: string
+          material_goal?: number | null
+          material_unit?: string | null
           mission_id: string
           name: string
+          objective_type?: string | null
           status?: string
           updated_at?: string
           user_id: string
@@ -68,9 +76,13 @@ export type Database = {
         Update: {
           created_at?: string
           description?: string | null
+          financial_goal?: number | null
           id?: string
+          material_goal?: number | null
+          material_unit?: string | null
           mission_id?: string
           name?: string
+          objective_type?: string | null
           status?: string
           updated_at?: string
           user_id?: string

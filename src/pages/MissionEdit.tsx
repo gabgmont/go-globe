@@ -7,6 +7,7 @@ import { Label } from '@/components/ui/label';
 import { Textarea } from '@/components/ui/textarea';
 import { Tabs, TabsContent, TabsList, TabsTrigger } from '@/components/ui/tabs';
 import { Dialog, DialogContent, DialogDescription, DialogFooter, DialogHeader, DialogTitle, DialogTrigger } from '@/components/ui/dialog';
+import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from '@/components/ui/select';
 import { useAuth } from '@/hooks/useAuth';
 import { useToast } from '@/hooks/use-toast';
 import { supabase } from '@/integrations/supabase/client';
@@ -37,6 +38,10 @@ interface Project {
   description: string;
   status: string;
   created_at: string;
+  objective_type?: 'financial' | 'material';
+  financial_goal?: number;
+  material_goal?: number;
+  material_unit?: string;
 }
 
 const MissionEdit = () => {
@@ -54,7 +59,14 @@ const MissionEdit = () => {
   // Form states
   const [editedMission, setEditedMission] = useState<Partial<Mission>>({});
   const [newProgress, setNewProgress] = useState({ title: '', description: '' });
-  const [newProject, setNewProject] = useState({ name: '', description: '' });
+  const [newProject, setNewProject] = useState({ 
+    name: '', 
+    description: '', 
+    objective_type: '', 
+    financial_goal: '', 
+    material_goal: '', 
+    material_unit: '' 
+  });
   const [showProgressDialog, setShowProgressDialog] = useState(false);
   const [showProjectDialog, setShowProjectDialog] = useState(false);
 
@@ -110,7 +122,10 @@ const MissionEdit = () => {
         .order('created_at', { ascending: false });
 
       if (projectsError) throw projectsError;
-      setProjects(projectsData || []);
+      setProjects((projectsData || []).map(project => ({
+        ...project,
+        objective_type: project.objective_type as 'financial' | 'material' | undefined
+      })));
 
     } catch (error) {
       console.error('Error fetching mission data:', error);
@@ -206,14 +221,29 @@ const MissionEdit = () => {
           name: newProject.name,
           description: newProject.description,
           user_id: user.id,
+          objective_type: newProject.objective_type || null,
+          financial_goal: newProject.objective_type === 'financial' ? parseFloat(newProject.financial_goal) || null : null,
+          material_goal: newProject.objective_type === 'material' ? parseFloat(newProject.material_goal) || null : null,
+          material_unit: newProject.objective_type === 'material' ? newProject.material_unit || null : null,
         })
         .select()
         .single();
 
       if (error) throw error;
 
-      setProjects([data, ...projects]);
-      setNewProject({ name: '', description: '' });
+      const typedProject = {
+        ...data,
+        objective_type: data.objective_type as 'financial' | 'material' | undefined
+      };
+      setProjects([typedProject, ...projects]);
+      setNewProject({ 
+        name: '', 
+        description: '', 
+        objective_type: '', 
+        financial_goal: '', 
+        material_goal: '', 
+        material_unit: '' 
+      });
       setShowProjectDialog(false);
       toast({
         title: 'Sucesso',
@@ -499,6 +529,56 @@ const MissionEdit = () => {
                         rows={4}
                       />
                     </div>
+                    <div className="space-y-2">
+                      <Label htmlFor="objective-type">Tipo de Objetivo</Label>
+                      <Select 
+                        value={newProject.objective_type} 
+                        onValueChange={(value) => setNewProject({ ...newProject, objective_type: value })}
+                      >
+                        <SelectTrigger>
+                          <SelectValue placeholder="Selecione o tipo de objetivo" />
+                        </SelectTrigger>
+                        <SelectContent>
+                          <SelectItem value="financial">Financeiro</SelectItem>
+                          <SelectItem value="material">Material</SelectItem>
+                        </SelectContent>
+                      </Select>
+                    </div>
+                    {newProject.objective_type === 'financial' && (
+                      <div className="space-y-2">
+                        <Label htmlFor="financial-goal">Meta Financeira</Label>
+                        <Input
+                          id="financial-goal"
+                          type="number"
+                          value={newProject.financial_goal}
+                          onChange={(e) => setNewProject({ ...newProject, financial_goal: e.target.value })}
+                          placeholder="Digite a meta financeira"
+                        />
+                      </div>
+                    )}
+                    {newProject.objective_type === 'material' && (
+                      <>
+                        <div className="space-y-2">
+                          <Label htmlFor="material-goal">Meta de Quantidade</Label>
+                          <Input
+                            id="material-goal"
+                            type="number"
+                            value={newProject.material_goal}
+                            onChange={(e) => setNewProject({ ...newProject, material_goal: e.target.value })}
+                            placeholder="Digite a quantidade meta"
+                          />
+                        </div>
+                        <div className="space-y-2">
+                          <Label htmlFor="material-unit">Unidade do Material</Label>
+                          <Input
+                            id="material-unit"
+                            value={newProject.material_unit}
+                            onChange={(e) => setNewProject({ ...newProject, material_unit: e.target.value })}
+                            placeholder="Ex: kg, unidades, litros"
+                          />
+                        </div>
+                      </>
+                    )}
                   </div>
                   <DialogFooter>
                     <Button variant="outline" onClick={() => setShowProjectDialog(false)}>
@@ -536,11 +616,37 @@ const MissionEdit = () => {
                         </div>
                       </div>
                     </CardHeader>
-                    {project.description && (
-                      <CardContent>
-                        <p className="text-sm">{project.description}</p>
-                      </CardContent>
-                    )}
+                    <CardContent>
+                      {project.description && (
+                        <p className="text-sm mb-3">{project.description}</p>
+                      )}
+                      {project.objective_type && (
+                        <div className="space-y-2">
+                          <div className="flex items-center gap-2">
+                            <span className="text-sm font-medium">Objetivo:</span>
+                            <span className="text-sm capitalize">
+                              {project.objective_type === 'financial' ? 'Financeiro' : 'Material'}
+                            </span>
+                          </div>
+                          {project.objective_type === 'financial' && project.financial_goal && (
+                            <div className="flex items-center gap-2">
+                              <span className="text-sm font-medium">Meta Financeira:</span>
+                              <span className="text-sm">
+                                R$ {project.financial_goal.toLocaleString('pt-BR', { minimumFractionDigits: 2 })}
+                              </span>
+                            </div>
+                          )}
+                          {project.objective_type === 'material' && project.material_goal && (
+                            <div className="flex items-center gap-2">
+                              <span className="text-sm font-medium">Meta:</span>
+                              <span className="text-sm">
+                                {project.material_goal} {project.material_unit || 'unidades'}
+                              </span>
+                            </div>
+                          )}
+                        </div>
+                      )}
+                    </CardContent>
                   </Card>
                 ))
               )}
