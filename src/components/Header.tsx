@@ -1,13 +1,14 @@
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
 import { Search, Globe, LogIn } from "lucide-react";
+import { Link } from "react-router-dom";
 
 export const Header = () => {
   return (
     <header className="bg-gradient-to-r from-primary to-accent text-primary-foreground shadow-lg">
       <div className="container mx-auto px-4 py-6">
         <div className="flex items-center justify-between">
-          <div className="flex items-center gap-3">
+          <Link to="/" className="flex items-center gap-3 hover:opacity-80 transition-opacity cursor-pointer">
             <div className="bg-background/10 p-2 rounded-lg backdrop-blur-sm">
               <Globe className="w-8 h-8" />
             </div>
@@ -15,7 +16,7 @@ export const Header = () => {
               <h1 className="text-2xl font-bold">World Mission Link</h1>
               <p className="text-primary-foreground/80 text-sm">Conectando corações ao redor do mundo</p>
             </div>
-          </div>
+          </Link>
           
           <div className="hidden md:flex items-center gap-4 flex-1 max-w-md ml-8">
             <div className="relative flex-1">
