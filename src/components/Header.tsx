@@ -1,9 +1,22 @@
+import { useState } from "react";
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
-import { Search, Globe, LogIn } from "lucide-react";
-import { Link } from "react-router-dom";
+import { Search, Globe, LogIn, User } from "lucide-react";
+import { Link, useNavigate } from "react-router-dom";
+import { Avatar, AvatarFallback, AvatarImage } from "@/components/ui/avatar";
+import { DropdownMenu, DropdownMenuContent, DropdownMenuItem, DropdownMenuTrigger } from "@/components/ui/dropdown-menu";
+import { LoginModal } from "./LoginModal";
+import { useAuth } from "@/hooks/useAuth";
 
 export const Header = () => {
+  const [loginModalOpen, setLoginModalOpen] = useState(false);
+  const { user, profile, signOut } = useAuth();
+  const navigate = useNavigate();
+
+  const handleProfileClick = () => {
+    navigate('/profile');
+  };
+
   return (
     <header className="bg-gradient-to-r from-primary to-accent text-primary-foreground shadow-lg">
       <div className="container mx-auto px-4 py-6">
@@ -29,10 +42,42 @@ export const Header = () => {
           </div>
           
           <div className="flex items-center gap-3">
-            <Button variant="secondary" size="sm">
-              <LogIn className="w-4 h-4" />
-              <span className="hidden sm:inline ml-2">Entrar</span>
-            </Button>
+            {user ? (
+              <DropdownMenu>
+                <DropdownMenuTrigger asChild>
+                  <div className="flex items-center gap-2 cursor-pointer hover:opacity-80 transition-opacity">
+                    <Avatar className="w-8 h-8">
+                      <AvatarImage src={profile?.avatar_url || ''} alt={profile?.display_name || ''} />
+                      <AvatarFallback className="text-xs">
+                        {profile?.display_name?.charAt(0) || user.email?.charAt(0) || 'U'}
+                      </AvatarFallback>
+                    </Avatar>
+                    <span className="hidden sm:inline text-sm font-medium">
+                      {profile?.display_name || user.email}
+                    </span>
+                  </div>
+                </DropdownMenuTrigger>
+                <DropdownMenuContent align="end">
+                  <DropdownMenuItem onClick={handleProfileClick}>
+                    <User className="w-4 h-4 mr-2" />
+                    Meu Perfil
+                  </DropdownMenuItem>
+                  <DropdownMenuItem onClick={signOut}>
+                    <LogIn className="w-4 h-4 mr-2" />
+                    Sair
+                  </DropdownMenuItem>
+                </DropdownMenuContent>
+              </DropdownMenu>
+            ) : (
+              <Button 
+                variant="secondary" 
+                size="sm"
+                onClick={() => setLoginModalOpen(true)}
+              >
+                <LogIn className="w-4 h-4" />
+                <span className="hidden sm:inline ml-2">Entrar</span>
+              </Button>
+            )}
           </div>
         </div>
         
@@ -47,6 +92,11 @@ export const Header = () => {
           </div>
         </div>
       </div>
+      
+      <LoginModal 
+        open={loginModalOpen} 
+        onOpenChange={setLoginModalOpen} 
+      />
     </header>
   );
 };
