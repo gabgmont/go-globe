@@ -6,6 +6,9 @@ import { Input } from '@/components/ui/input';
 import { Label } from '@/components/ui/label';
 import { Textarea } from '@/components/ui/textarea';
 import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from '@/components/ui/select';
+import { Command, CommandEmpty, CommandGroup, CommandInput, CommandItem, CommandList } from '@/components/ui/command';
+import { Popover, PopoverContent, PopoverTrigger } from '@/components/ui/popover';
+import { Check, ChevronsUpDown } from 'lucide-react';
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from '@/components/ui/card';
 import { useToast } from '@/hooks/use-toast';
 import { supabase } from '@/integrations/supabase/client';
@@ -17,6 +20,7 @@ const MissionaryApplication = () => {
   const { toast } = useToast();
   const [loading, setLoading] = useState(false);
   const [churches, setChurches] = useState<Array<{id: string; name: string}>>([]);
+  const [openChurchSelector, setOpenChurchSelector] = useState(false);
   const [formData, setFormData] = useState({
     name: '',
     photo: null as File | null,
@@ -308,20 +312,63 @@ const MissionaryApplication = () => {
                   </div>
 
                   <div className="space-y-2 md:col-span-2">
-                    <Label htmlFor="church_id">Igreja Vinculada (opcional)</Label>
-                    <Select value={formData.church_id} onValueChange={(value) => handleInputChange('church_id', value)}>
-                      <SelectTrigger>
-                        <SelectValue placeholder="Selecione uma igreja (opcional)" />
-                      </SelectTrigger>
-                      <SelectContent>
-                        <SelectItem value="none">Nenhuma igreja selecionada</SelectItem>
-                        {churches.map((church) => (
-                          <SelectItem key={church.id} value={church.id}>
-                            {church.name}
-                          </SelectItem>
-                        ))}
-                      </SelectContent>
-                    </Select>
+                    <Label htmlFor="church_id">Instituição Vinculada (opcional)</Label>
+                    <Popover open={openChurchSelector} onOpenChange={setOpenChurchSelector}>
+                      <PopoverTrigger asChild>
+                        <Button
+                          variant="outline"
+                          role="combobox"
+                          aria-expanded={openChurchSelector}
+                          className="w-full justify-between"
+                        >
+                          {formData.church_id && formData.church_id !== 'none'
+                            ? churches.find((church) => church.id === formData.church_id)?.name
+                            : "Selecione uma instituição (opcional)"}
+                          <ChevronsUpDown className="ml-2 h-4 w-4 shrink-0 opacity-50" />
+                        </Button>
+                      </PopoverTrigger>
+                      <PopoverContent className="w-full p-0">
+                        <Command>
+                          <CommandInput placeholder="Buscar instituição..." />
+                          <CommandList>
+                            <CommandEmpty>Nenhuma instituição encontrada.</CommandEmpty>
+                            <CommandGroup>
+                              <CommandItem
+                                value="none"
+                                onSelect={() => {
+                                  handleInputChange('church_id', 'none');
+                                  setOpenChurchSelector(false);
+                                }}
+                              >
+                                <Check
+                                  className={`mr-2 h-4 w-4 ${
+                                    formData.church_id === 'none' || !formData.church_id ? "opacity-100" : "opacity-0"
+                                  }`}
+                                />
+                                Nenhuma instituição selecionada
+                              </CommandItem>
+                              {churches.map((church) => (
+                                <CommandItem
+                                  key={church.id}
+                                  value={church.name}
+                                  onSelect={() => {
+                                    handleInputChange('church_id', church.id);
+                                    setOpenChurchSelector(false);
+                                  }}
+                                >
+                                  <Check
+                                    className={`mr-2 h-4 w-4 ${
+                                      formData.church_id === church.id ? "opacity-100" : "opacity-0"
+                                    }`}
+                                  />
+                                  {church.name}
+                                </CommandItem>
+                              ))}
+                            </CommandGroup>
+                          </CommandList>
+                        </Command>
+                      </PopoverContent>
+                    </Popover>
                   </div>
 
                   <div className="space-y-2 md:col-span-2">
