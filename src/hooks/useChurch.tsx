@@ -158,7 +158,7 @@ export const useChurch = () => {
       if (logoFile) {
         const fileExt = logoFile.name.split('.').pop();
         const fileName = `${Math.random()}.${fileExt}`;
-        const filePath = `church-logos/${fileName}`;
+        const filePath = fileName; // Remove o prefixo church-logos pois já está no bucket
 
         const { error: uploadError } = await supabase.storage
           .from('church-logos')
