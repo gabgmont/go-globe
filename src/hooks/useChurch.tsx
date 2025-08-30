@@ -161,13 +161,13 @@ export const useChurch = () => {
         const filePath = `church-logos/${fileName}`;
 
         const { error: uploadError } = await supabase.storage
-          .from('project-images')
+          .from('church-logos')
           .upload(filePath, logoFile);
 
         if (uploadError) throw uploadError;
 
         const { data: { publicUrl } } = supabase.storage
-          .from('project-images')
+          .from('church-logos')
           .getPublicUrl(filePath);
 
         logoUrl = publicUrl;
