@@ -16,6 +16,7 @@ interface ProjectCardProps {
   image?: string;
   urgent?: boolean;
   missionaryId?: string;
+  objectiveType?: string;
 }
 
 export const ProjectCard = ({
@@ -29,10 +30,12 @@ export const ProjectCard = ({
   supporters,
   image,
   urgent = false,
-  missionaryId = "1"
+  missionaryId = "1",
+  objectiveType
 }: ProjectCardProps) => {
   const navigate = useNavigate();
   const progressPercentage = (progress / goal) * 100;
+  const isMaterialDonation = objectiveType === 'material';
 
   const handleProjectClick = () => {
     navigate(`/missionary/${missionaryId}?tab=project`);
@@ -93,8 +96,12 @@ export const ProjectCard = ({
               <span>{supporters} apoiadores</span>
             </div>
             <div className="text-right">
-              <div className="text-lg font-bold text-accent">R$ {progress.toLocaleString()}</div>
-              <div className="text-xs text-muted-foreground">de R$ {goal.toLocaleString()}</div>
+              <div className="text-lg font-bold text-accent">
+                {isMaterialDonation ? progress.toLocaleString() : `R$ ${progress.toLocaleString()}`}
+              </div>
+              <div className="text-xs text-muted-foreground">
+                de {isMaterialDonation ? goal.toLocaleString() : `R$ ${goal.toLocaleString()}`}
+              </div>
             </div>
           </div>
         </div>

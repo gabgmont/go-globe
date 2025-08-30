@@ -166,11 +166,12 @@ const Index = () => {
                           description={project.description || ''}
                           category={project.mission?.category || 'Categoria não informada'}
                           progress={0} // Será implementado quando houver sistema de doações
-                          goal={project.financial_goal || 0}
+                          goal={project.financial_goal || project.material_goal || 0}
                           supporters={0} // Será implementado quando houver sistema de doações
                           image={project.image_url}
                           urgent={false}
                           missionaryId={project.mission?.user_id}
+                          objectiveType={project.objective_type}
                         />
                       </CarouselItem>
                     ))}
@@ -237,11 +238,12 @@ const Index = () => {
                     description={project.description || ''}
                     category={project.mission?.category || 'Categoria não informada'}
                     progress={0}
-                    goal={project.financial_goal || 0}
+                    goal={project.financial_goal || project.material_goal || 0}
                     supporters={0}
                     image={project.image_url}
                     urgent={false}
                     missionaryId={project.mission?.user_id}
+                    objectiveType={project.objective_type}
                   />
                 ))}
               </div>
