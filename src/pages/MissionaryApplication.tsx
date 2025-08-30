@@ -13,11 +13,12 @@ import { Card, CardContent, CardDescription, CardHeader, CardTitle } from '@/com
 import { useToast } from '@/hooks/use-toast';
 import { supabase } from '@/integrations/supabase/client';
 import { CalendarIcon, Upload, ArrowLeft } from 'lucide-react';
-import { Link } from 'react-router-dom';
+import { Link, useNavigate } from 'react-router-dom';
 
 const MissionaryApplication = () => {
   const { user } = useAuth();
   const { toast } = useToast();
+  const navigate = useNavigate();
   const [loading, setLoading] = useState(false);
   const [churches, setChurches] = useState<Array<{id: string; name: string}>>([]);
   const [openChurchSelector, setOpenChurchSelector] = useState(false);
@@ -181,6 +182,9 @@ const MissionaryApplication = () => {
         additional_info: '',
         church_id: ''
       });
+
+      // Redirecionar para o perfil
+      navigate('/profile');
 
     } catch (error: any) {
       console.error('Submission error:', error);
