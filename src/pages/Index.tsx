@@ -194,11 +194,23 @@ const Index = () => {
                   ))}
                 </div>
               ) : missionaries.length > 0 ? (
-                <div className="grid md:grid-cols-2 lg:grid-cols-4 gap-6">
-                  {missionaries.slice(0, 4).map((missionary) => (
-                    <MissionaryCard key={missionary.id} {...missionary} />
-                  ))}
-                </div>
+                <Carousel
+                  opts={{
+                    align: "start",
+                    loop: false,
+                  }}
+                  className="w-full"
+                >
+                  <CarouselContent className="-ml-2 md:-ml-4">
+                    {missionaries.slice(0, 4).map((missionary) => (
+                      <CarouselItem key={missionary.id} className="pl-2 md:pl-4 md:basis-1/2 lg:basis-1/3 xl:basis-1/4">
+                        <MissionaryCard key={missionary.id} {...missionary} />
+                      </CarouselItem>
+                    ))}
+                  </CarouselContent>
+                  <CarouselPrevious />
+                  <CarouselNext />
+                </Carousel>
               ) : (
                 <div className="text-center py-12">
                   <p className="text-muted-foreground">Nenhum missionário encontrado no momento.</p>
