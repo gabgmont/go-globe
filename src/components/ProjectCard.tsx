@@ -2,6 +2,7 @@ import { Card, CardContent, CardFooter, CardHeader } from "@/components/ui/card"
 import { Button } from "@/components/ui/button";
 import { Badge } from "@/components/ui/badge";
 import { MapPin, Target, Users, Heart } from "lucide-react";
+import { useNavigate } from "react-router-dom";
 
 interface ProjectCardProps {
   id: string;
@@ -14,9 +15,11 @@ interface ProjectCardProps {
   supporters: number;
   image?: string;
   urgent?: boolean;
+  missionaryId?: string;
 }
 
 export const ProjectCard = ({
+  id,
   title,
   location,
   description,
@@ -25,12 +28,18 @@ export const ProjectCard = ({
   goal,
   supporters,
   image,
-  urgent = false
+  urgent = false,
+  missionaryId = "1"
 }: ProjectCardProps) => {
+  const navigate = useNavigate();
   const progressPercentage = (progress / goal) * 100;
 
+  const handleProjectClick = () => {
+    navigate(`/missionary/${missionaryId}?tab=project`);
+  };
+
   return (
-    <Card className="group hover:shadow-card-hover transition-all duration-300 transform hover:-translate-y-1 border-0 shadow-card bg-gradient-to-br from-card to-card/95">
+    <Card className="group hover:shadow-card-hover transition-all duration-300 transform hover:-translate-y-1 border-0 shadow-card bg-gradient-to-br from-card to-card/95 cursor-pointer" onClick={handleProjectClick}>
       <CardHeader className="p-0">
         <div className="relative overflow-hidden rounded-t-lg h-48 bg-gradient-to-br from-primary/10 to-accent/10">
           {image ? (

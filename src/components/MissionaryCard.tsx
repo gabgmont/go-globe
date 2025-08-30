@@ -2,6 +2,7 @@ import { Card, CardContent, CardFooter, CardHeader } from "@/components/ui/card"
 import { Button } from "@/components/ui/button";
 import { Badge } from "@/components/ui/badge";
 import { MapPin, Users, Calendar, MessageCircle } from "lucide-react";
+import { useNavigate } from "react-router-dom";
 
 interface MissionaryCardProps {
   id: string;
@@ -17,6 +18,7 @@ interface MissionaryCardProps {
 }
 
 export const MissionaryCard = ({
+  id,
   name,
   location,
   mission,
@@ -27,14 +29,20 @@ export const MissionaryCard = ({
   specialization,
   status
 }: MissionaryCardProps) => {
+  const navigate = useNavigate();
+  
   const statusConfig = {
     active: { label: 'Ativo', color: 'bg-accent text-accent-foreground' },
     preparing: { label: 'Preparando', color: 'bg-impact text-impact-foreground' },
     returning: { label: 'Retornando', color: 'bg-muted text-muted-foreground' }
   };
 
+  const handleCardClick = () => {
+    navigate(`/missionary/${id}`);
+  };
+
   return (
-    <Card className="group hover:shadow-card-hover transition-all duration-300 transform hover:-translate-y-1 border-0 shadow-card bg-gradient-to-br from-card to-card/95">
+    <Card className="group hover:shadow-card-hover transition-all duration-300 transform hover:-translate-y-1 border-0 shadow-card bg-gradient-to-br from-card to-card/95 cursor-pointer" onClick={handleCardClick}>
       <CardHeader className="text-center pb-2">
         <div className="relative mx-auto">
           <div className="w-20 h-20 rounded-full overflow-hidden ring-4 ring-primary/10 group-hover:ring-primary/20 transition-all duration-300 mx-auto">
