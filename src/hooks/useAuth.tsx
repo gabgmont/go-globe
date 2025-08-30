@@ -2,6 +2,7 @@ import { useState, useEffect, createContext, useContext, ReactNode } from 'react
 import { User, Session } from '@supabase/supabase-js';
 import { supabase } from '@/integrations/supabase/client';
 import { useToast } from '@/hooks/use-toast';
+import { useNavigate } from 'react-router-dom';
 
 interface Profile {
   id: string;
@@ -30,6 +31,7 @@ export const AuthProvider = ({ children }: { children: ReactNode }) => {
   const [profile, setProfile] = useState<Profile | null>(null);
   const [loading, setLoading] = useState(true);
   const { toast } = useToast();
+  const navigate = useNavigate();
 
   const fetchProfile = async (userId: string) => {
     try {
@@ -150,6 +152,9 @@ export const AuthProvider = ({ children }: { children: ReactNode }) => {
       // Reset CSS variables to original theme colors
       document.documentElement.style.removeProperty('--primary');
       document.documentElement.style.removeProperty('--secondary');
+      
+      // Redirect to home page
+      navigate('/');
       
       toast({
         title: "Logout realizado",
