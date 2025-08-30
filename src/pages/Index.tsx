@@ -9,7 +9,9 @@ import { InteractiveMap } from "@/components/InteractiveMap";
 import { Button } from "@/components/ui/button";
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
 import { Badge } from "@/components/ui/badge";
+import { Carousel, CarouselContent, CarouselItem, CarouselPrevious, CarouselNext } from "@/components/ui/carousel";
 import { ArrowRight, Globe, Target, Users, Heart } from "lucide-react";
+import { useMissionProjects } from "@/hooks/useMissionProjects";
 import heroImage from "@/assets/hero-missions.jpg";
 import missionary1 from "@/assets/missionary-1.jpg";
 import missionary2 from "@/assets/missionary-2.jpg";
@@ -17,6 +19,7 @@ import missionary2 from "@/assets/missionary-2.jpg";
 const Index = () => {
   const [activeTab, setActiveTab] = useState('inicio');
   const [activeFilters, setActiveFilters] = useState<string[]>([]);
+  const { projects, loading: projectsLoading } = useMissionProjects();
 
   // Mock data
   const featuredProjects = [
@@ -132,11 +135,54 @@ const Index = () => {
                   <ArrowRight className="w-4 h-4" />
                 </Button>
               </div>
-              <div className="grid md:grid-cols-2 lg:grid-cols-3 gap-6">
-                {featuredProjects.map((project) => (
-                  <ProjectCard key={project.id} {...project} />
-                ))}
-              </div>
+              
+              {projectsLoading ? (
+                <div className="grid md:grid-cols-2 lg:grid-cols-4 gap-6">
+                  {[...Array(4)].map((_, i) => (
+                    <div key={i} className="animate-pulse">
+                      <div className="bg-muted h-48 rounded-t-lg mb-4"></div>
+                      <div className="space-y-2">
+                        <div className="bg-muted h-4 rounded w-3/4"></div>
+                        <div className="bg-muted h-3 rounded w-1/2"></div>
+                      </div>
+                    </div>
+                  ))}
+                </div>
+              ) : projects.length > 0 ? (
+                <Carousel
+                  opts={{
+                    align: "start",
+                    loop: false,
+                  }}
+                  className="w-full"
+                >
+                  <CarouselContent className="-ml-2 md:-ml-4">
+                    {projects.slice(0, 4).map((project) => (
+                      <CarouselItem key={project.id} className="pl-2 md:pl-4 md:basis-1/2 lg:basis-1/3 xl:basis-1/4">
+                        <ProjectCard
+                          id={project.id}
+                          title={project.name}
+                          location={project.mission?.location || 'Localização não informada'}
+                          description={project.description || ''}
+                          category={project.mission?.category || 'Categoria não informada'}
+                          progress={0} // Será implementado quando houver sistema de doações
+                          goal={project.financial_goal || 0}
+                          supporters={0} // Será implementado quando houver sistema de doações
+                          image={project.image_url}
+                          urgent={false}
+                          missionaryId={project.mission?.user_id}
+                        />
+                      </CarouselItem>
+                    ))}
+                  </CarouselContent>
+                  <CarouselPrevious />
+                  <CarouselNext />
+                </Carousel>
+              ) : (
+                <div className="text-center py-12">
+                  <p className="text-muted-foreground">Nenhum projeto encontrado no momento.</p>
+                </div>
+              )}
             </section>
 
             {/* Interactive Map */}
@@ -182,8 +228,21 @@ const Index = () => {
                 <p className="text-muted-foreground">Descubra projetos que precisam do seu apoio</p>
               </div>
               <div className="grid md:grid-cols-2 lg:grid-cols-3 gap-6">
-                {featuredProjects.map((project) => (
-                  <ProjectCard key={project.id} {...project} />
+                {projects.map((project) => (
+                  <ProjectCard
+                    key={project.id}
+                    id={project.id}
+                    title={project.name}
+                    location={project.mission?.location || 'Localização não informada'}
+                    description={project.description || ''}
+                    category={project.mission?.category || 'Categoria não informada'}
+                    progress={0}
+                    goal={project.financial_goal || 0}
+                    supporters={0}
+                    image={project.image_url}
+                    urgent={false}
+                    missionaryId={project.mission?.user_id}
+                  />
                 ))}
               </div>
             </div>
