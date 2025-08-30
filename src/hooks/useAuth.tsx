@@ -147,7 +147,13 @@ export const AuthProvider = ({ children }: { children: ReactNode }) => {
 
   const signOut = async () => {
     try {
-      await supabase.auth.signOut();
+      // Check if user is already signed out to avoid multiple requests
+      if (!session) {
+        navigate('/');
+        return;
+      }
+
+      const { error } = await supabase.auth.signOut();
       
       // Reset CSS variables to original theme colors
       document.documentElement.style.removeProperty('--primary');
@@ -156,12 +162,24 @@ export const AuthProvider = ({ children }: { children: ReactNode }) => {
       // Redirect to home page
       navigate('/');
       
-      toast({
-        title: "Logout realizado",
-        description: "Até logo!",
-      });
-    } catch (error) {
+      // Only show success toast if no error occurred
+      if (!error) {
+        toast({
+          title: "Logout realizado",
+          description: "Até logo!",
+        });
+      }
+    } catch (error: any) {
       console.error('Error signing out:', error);
+      
+      // Even if there's an error, clean up local state and redirect
+      navigate('/');
+      
+      toast({
+        variant: "destructive",
+        title: "Erro no logout",
+        description: "Houve um problema, mas você foi desconectado.",
+      });
     }
   };
 
