@@ -55,34 +55,19 @@ const MissionaryApplication = () => {
 
   const fetchChurches = async () => {
     try {
-      console.log('Buscando instituições...');
       const { data, error } = await supabase
         .from('churches')
         .select('id, name')
         .order('name');
       
-      console.log('Resultado da busca:', { data, error });
+      if (error) {
+        console.error('Error fetching churches:', error);
+        return;
+      }
       
-      if (error) throw error;
       setChurches(data || []);
-      console.log('Instituições carregadas:', data);
     } catch (error) {
       console.error('Error fetching churches:', error);
-      // Tentar buscar sem autenticação se houver erro de RLS
-      try {
-        console.log('Tentando busca alternativa...');
-        const { data: publicData, error: publicError } = await supabase
-          .from('churches')
-          .select('id, name')
-          .order('name');
-        
-        if (!publicError) {
-          setChurches(publicData || []);
-          console.log('Busca alternativa funcionou:', publicData);
-        }
-      } catch (fallbackError) {
-        console.error('Busca alternativa também falhou:', fallbackError);
-      }
     }
   };
 
