@@ -131,14 +131,14 @@ export const useChurch = () => {
       }
 
       toast({
-        title: "Igreja atualizada",
-        description: "Os dados da igreja foram atualizados com sucesso!",
+        title: "Instituição atualizada",
+        description: "Os dados da instituição foram atualizados com sucesso!",
       });
     } catch (error) {
       toast({
         variant: "destructive",
         title: "Erro ao atualizar",
-        description: "Não foi possível atualizar os dados da igreja.",
+        description: "Não foi possível atualizar os dados da instituição.",
       });
     }
   };
@@ -197,7 +197,7 @@ export const useChurch = () => {
       } else {
         toast({
           title: "Cadastro realizado",
-          description: "Verifique seu email para confirmar a conta da igreja.",
+          description: "Verifique seu email para confirmar a conta da instituição.",
         });
       }
 

@@ -81,8 +81,8 @@ export const Header = () => {
                   variant="outline"
                   size="sm"
                 >
-                  <span className="hidden sm:inline">Cadastrar minha igreja</span>
-                  <span className="sm:hidden">Igreja</span>
+                  <span className="hidden sm:inline">Cadastrar minha instituição</span>
+                  <span className="sm:hidden">Instituição</span>
                 </Button>
                 <Button 
                   onClick={() => setLoginModalOpen(true)} 

@@ -84,7 +84,7 @@ export const LoginModal = ({ open, onOpenChange }: LoginModalProps) => {
               onClick={() => setIsChurchLogin(true)}
               className="flex-1"
             >
-              Igreja (Admin)
+              Instituição (Admin)
             </Button>
           </div>
           
@@ -99,7 +99,7 @@ export const LoginModal = ({ open, onOpenChange }: LoginModalProps) => {
                 {isChurchLogin && (
                   <div className="bg-blue-50 border border-blue-200 rounded-lg p-3">
                     <p className="text-sm text-blue-800">
-                      Fazendo login como <strong>Igreja/Administrador</strong>
+                      Fazendo login como <strong>Instituição/Administrador</strong>
                     </p>
                   </div>
                 )}
@@ -138,7 +138,7 @@ export const LoginModal = ({ open, onOpenChange }: LoginModalProps) => {
               {isChurchLogin ? (
                 <div className="bg-yellow-50 border border-yellow-200 rounded-lg p-4 text-center">
                   <p className="text-sm text-yellow-800 mb-2">
-                    Para cadastrar uma igreja, use o botão <strong>"Cadastrar minha igreja"</strong> 
+                    Para cadastrar uma instituição, use o botão <strong>"Cadastrar minha instituição"</strong> 
                   </p>
                   <Button 
                     type="button"

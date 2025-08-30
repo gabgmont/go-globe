@@ -114,7 +114,7 @@ export default function ChurchProfile() {
             <CardContent className="p-6 text-center">
               <h2 className="text-xl font-semibold mb-2">Acesso Restrito</h2>
               <p className="text-muted-foreground mb-4">
-                Você precisa estar logado como igreja para acessar esta página.
+                Você precisa estar logado como instituição para acessar esta página.
               </p>
             </CardContent>
           </Card>
@@ -142,7 +142,7 @@ export default function ChurchProfile() {
         {/* Church Information */}
         <Card>
           <CardHeader className="flex flex-row items-center justify-between">
-            <CardTitle>Informações da Igreja</CardTitle>
+            <CardTitle>Informações da Instituição</CardTitle>
             <Button
               variant="outline"
               size="sm"
@@ -163,7 +163,7 @@ export default function ChurchProfile() {
               <div>
                 {editMode ? (
                   <div className="space-y-2">
-                    <Label htmlFor="church-name">Nome da Igreja</Label>
+                    <Label htmlFor="church-name">Nome da Instituição</Label>
                     <Input
                       id="church-name"
                       value={editData.name}

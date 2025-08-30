@@ -62,18 +62,18 @@ export const ChurchSignupModal = ({ open, onOpenChange }: ChurchSignupModalProps
     <Dialog open={open} onOpenChange={onOpenChange}>
       <DialogContent className="max-w-md">
         <DialogHeader>
-          <DialogTitle>Cadastrar Igreja</DialogTitle>
+          <DialogTitle>Cadastrar Instituição</DialogTitle>
         </DialogHeader>
         
         <form onSubmit={handleSubmit} className="space-y-4">
           <div className="space-y-2">
-            <Label htmlFor="church-name">Nome da Igreja</Label>
+            <Label htmlFor="church-name">Nome da Instituição</Label>
             <Input
               id="church-name"
               type="text"
               value={formData.name}
               onChange={(e) => setFormData({ ...formData, name: e.target.value })}
-              placeholder="Nome completo da igreja"
+              placeholder="Nome completo da instituição"
               required
             />
           </div>
@@ -85,7 +85,7 @@ export const ChurchSignupModal = ({ open, onOpenChange }: ChurchSignupModalProps
               type="email"
               value={formData.email}
               onChange={(e) => setFormData({ ...formData, email: e.target.value })}
-              placeholder="email@igreja.com"
+              placeholder="email@instituicao.com"
               required
             />
           </div>
@@ -103,7 +103,7 @@ export const ChurchSignupModal = ({ open, onOpenChange }: ChurchSignupModalProps
           </div>
 
           <div className="space-y-2">
-            <Label htmlFor="church-logo">Logo da Igreja</Label>
+            <Label htmlFor="church-logo">Logo da Instituição</Label>
             <div className="relative">
               <Input
                 id="church-logo"
@@ -160,7 +160,7 @@ export const ChurchSignupModal = ({ open, onOpenChange }: ChurchSignupModalProps
               Cancelar
             </Button>
             <Button type="submit" disabled={loading} className="flex-1">
-              {loading ? 'Cadastrando...' : 'Cadastrar Igreja'}
+              {loading ? 'Cadastrando...' : 'Cadastrar Instituição'}
             </Button>
           </div>
         </form>
