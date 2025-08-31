@@ -4,6 +4,7 @@ import { Button } from "@/components/ui/button";
 import { Badge } from "@/components/ui/badge";
 import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs";
 import { Header } from "@/components/Header";
+import { Footer } from "@/components/Footer";
 import { MapPin, Calendar, Users, Heart, MessageCircle, Target, CheckCircle, Clock, DollarSign, Video, Mail, Phone, Globe } from "lucide-react";
 
 const MissionaryProfile = () => {
@@ -347,6 +348,7 @@ const MissionaryProfile = () => {
           </TabsContent>
         </Tabs>
       </div>
+      <Footer />
     </div>
   );
 };

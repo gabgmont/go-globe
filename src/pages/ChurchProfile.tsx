@@ -2,6 +2,7 @@ import { useEffect, useState } from 'react';
 import { useAuth } from '@/hooks/useAuth';
 import { useChurch } from '@/hooks/useChurch';
 import { Header } from '@/components/Header';
+import { Footer } from '@/components/Footer';
 import { Button } from '@/components/ui/button';
 import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card';
 import { Badge } from '@/components/ui/badge';
@@ -295,6 +296,7 @@ export default function ChurchProfile() {
           </CardContent>
         </Card>
       </div>
+      <Footer />
     </div>
   );
 }

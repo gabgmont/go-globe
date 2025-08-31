@@ -1,4 +1,5 @@
 import { useState } from "react";
+import { Footer } from "@/components/Footer";
 import { Header } from "@/components/Header";
 import { Navigation } from "@/components/Navigation";
 import { StatsSection } from "@/components/StatsSection";
@@ -458,18 +459,7 @@ const Index = () => {
         {renderContent()}
       </main>
       
-      {/* Footer */}
-      <footer className="bg-primary text-primary-foreground py-8 mt-12">
-        <div className="container mx-auto px-4 text-center">
-          <div className="flex items-center justify-center gap-2 mb-4">
-            <Globe className="w-6 h-6" />
-            <span className="text-xl font-bold">World Mission Link</span>
-          </div>
-          <p className="text-primary-foreground/80">
-            Conectando corações, transformando vidas © 2024
-          </p>
-        </div>
-      </footer>
+      <Footer />
     </div>
   );
 };
