@@ -24,7 +24,8 @@ const NewMission = () => {
     category: '',
     location: '',
     about: '',
-    objectives: ''
+    objectives: '',
+    estimated_monthly_income: ''
   });
 
   const categories = [
@@ -82,7 +83,8 @@ const NewMission = () => {
           category: formData.category,
           location: formData.location || null,
           about: formData.about,
-          objectives: formData.objectives
+          objectives: formData.objectives,
+          estimated_monthly_income: formData.estimated_monthly_income ? parseFloat(formData.estimated_monthly_income) : 0
         });
 
       if (error) throw error;
@@ -261,6 +263,22 @@ const NewMission = () => {
                     placeholder="Quais são os objetivos e metas da sua missão?"
                     rows={4}
                   />
+                </div>
+
+                <div className="space-y-2">
+                  <Label htmlFor="estimated_monthly_income">Meta de Renda Mensal (R$)</Label>
+                  <Input
+                    id="estimated_monthly_income"
+                    type="number"
+                    step="0.01"
+                    min="0"
+                    value={formData.estimated_monthly_income}
+                    onChange={(e) => setFormData({ ...formData, estimated_monthly_income: e.target.value })}
+                    placeholder="Ex: 5000.00"
+                  />
+                  <p className="text-xs text-muted-foreground">
+                    Valor mensal que você espera arrecadar para sua missão. Quando este valor for atingido, as doações serão limitadas.
+                  </p>
                 </div>
 
                 <div className="flex gap-3 pt-4">

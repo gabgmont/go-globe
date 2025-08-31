@@ -31,6 +31,7 @@ interface MissionaryData {
   website?: string;
   totalGoal: number;
   currentProgress: number;
+  estimatedMonthlyIncome?: number;
   projectGoals: Array<{
     id: number;
     title: string;
@@ -97,12 +98,19 @@ const MissionaryProfile = () => {
         throw new Error('Missionário não encontrado');
       }
 
+      // Buscar dados de apoio financeiro e meta mensal
+      const currentDate = new Date();
+      const firstDayOfMonth = new Date(currentDate.getFullYear(), currentDate.getMonth(), 1);
+      const lastDayOfMonth = new Date(currentDate.getFullYear(), currentDate.getMonth() + 1, 0);
+
       // Buscar missão associada
       const { data: missionData, error: missionError } = await supabase
         .from('missions')
-        .select('*')
+        .select('*, estimated_monthly_income')
         .eq('missionary_application_id', id)
         .single();
+
+      const estimatedMonthlyIncome = missionData?.estimated_monthly_income || 0;
 
       // Buscar progresso da missão
       let progressData: MissionProgressData[] = [];
@@ -131,11 +139,6 @@ const MissionaryProfile = () => {
           projectsData = projects;
         }
       }
-
-      // Buscar dados de apoio financeiro
-      const currentDate = new Date();
-      const firstDayOfMonth = new Date(currentDate.getFullYear(), currentDate.getMonth(), 1);
-      const lastDayOfMonth = new Date(currentDate.getFullYear(), currentDate.getMonth() + 1, 0);
 
       // Buscar apoios do mês corrente
       const { data: monthlySupports, error: monthlySupportsError } = await supabase
@@ -176,6 +179,7 @@ const MissionaryProfile = () => {
         startDate: new Date(missionaryData.start_date).getFullYear().toString(),
         supporters: supporters,
         monthlySupport: monthlySupport,
+        estimatedMonthlyIncome: estimatedMonthlyIncome,
         avatar: missionaryData.photo_url || '/placeholder.svg',
         specialization: missionaryData.work_category,
         status: 'active',
@@ -277,6 +281,30 @@ const MissionaryProfile = () => {
       return;
     }
 
+    // Verificar se a meta mensal foi atingida
+    if (missionary?.estimatedMonthlyIncome && 
+        missionary.monthlySupport >= missionary.estimatedMonthlyIncome) {
+      toast({
+        title: "Meta atingida",
+        description: "Este missionário já atingiu sua meta mensal de doações. Tente novamente no próximo mês.",
+        variant: "destructive",
+      });
+      return;
+    }
+
+    // Verificar se a doação excederia a meta
+    const newTotal = missionary!.monthlySupport + parseInt(supportAmount);
+    if (missionary?.estimatedMonthlyIncome && 
+        newTotal > missionary.estimatedMonthlyIncome) {
+      const maxAmount = missionary.estimatedMonthlyIncome - missionary.monthlySupport;
+      toast({
+        title: "Valor limitado",
+        description: `Este missionário precisa de apenas R$ ${maxAmount.toLocaleString()} para atingir sua meta mensal.`,
+        variant: "destructive",
+      });
+      return;
+    }
+
     try {
       // Verificar se o usuário está logado
       const { data: { session } } = await supabase.auth.getSession();
@@ -315,8 +343,8 @@ const MissionaryProfile = () => {
       setSupportAmount('');
       setSupportType('monthly');
 
-      // Aqui seria implementada a integração com o sistema de pagamento
-      // Por agora, apenas mostramos a confirmação
+      // Recarregar dados para atualizar os indicadores
+      fetchMissionaryData();
       
     } catch (error: any) {
       console.error('Error registering support:', error);
@@ -441,6 +469,32 @@ const MissionaryProfile = () => {
             <p className="text-center text-muted-foreground">Escolha o valor e a forma de apoio</p>
           </CardHeader>
           <CardContent className="space-y-6">
+            {/* Indicador de meta */}
+            {missionary.estimatedMonthlyIncome && missionary.estimatedMonthlyIncome > 0 && (
+              <div className="bg-secondary/30 rounded-lg p-4 mb-6">
+                <div className="flex justify-between items-center mb-2">
+                  <span className="text-sm font-medium">Meta Mensal</span>
+                  <span className="text-sm text-muted-foreground">
+                    R$ {missionary.monthlySupport.toLocaleString()} / R$ {missionary.estimatedMonthlyIncome.toLocaleString()}
+                  </span>
+                </div>
+                <div className="w-full bg-background rounded-full h-2">
+                  <div 
+                    className="bg-primary h-2 rounded-full transition-all duration-300" 
+                    style={{ 
+                      width: `${Math.min((missionary.monthlySupport / missionary.estimatedMonthlyIncome) * 100, 100)}%` 
+                    }}
+                  />
+                </div>
+                <p className="text-xs text-muted-foreground mt-2">
+                  {missionary.monthlySupport >= missionary.estimatedMonthlyIncome ? 
+                    "🎉 Meta mensal atingida!" : 
+                    `Faltam R$ ${(missionary.estimatedMonthlyIncome - missionary.monthlySupport).toLocaleString()} para atingir a meta`
+                  }
+                </p>
+              </div>
+            )}
+
             {/* Opções rápidas */}
             <div className="grid grid-cols-2 md:grid-cols-4 gap-3">
               {presetOptions.map((option, index) => (
@@ -528,12 +582,15 @@ const MissionaryProfile = () => {
 
                 <Button 
                   onClick={handleSupport}
-                  disabled={!isValidAmount}
+                  disabled={!isValidAmount || (missionary.estimatedMonthlyIncome && missionary.monthlySupport >= missionary.estimatedMonthlyIncome)}
                   className="w-full mt-4"
                   size="lg"
                 >
                   <Heart className="w-4 h-4 mr-2" />
-                  {supportType === 'monthly' ? 'Apoiar Mensalmente' : 'Fazer Doação'}
+                  {missionary.estimatedMonthlyIncome && missionary.monthlySupport >= missionary.estimatedMonthlyIncome ?
+                    "Meta Atingida" :
+                    supportType === 'monthly' ? 'Apoiar Mensalmente' : 'Fazer Doação'
+                  }
                 </Button>
               </div>
             </div>

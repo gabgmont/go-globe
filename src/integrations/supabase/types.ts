@@ -242,6 +242,7 @@ export type Database = {
           about: string
           category: string
           created_at: string
+          estimated_monthly_income: number | null
           id: string
           location: string | null
           missionary_application_id: string | null
@@ -255,6 +256,7 @@ export type Database = {
           about: string
           category: string
           created_at?: string
+          estimated_monthly_income?: number | null
           id?: string
           location?: string | null
           missionary_application_id?: string | null
@@ -268,6 +270,7 @@ export type Database = {
           about?: string
           category?: string
           created_at?: string
+          estimated_monthly_income?: number | null
           id?: string
           location?: string | null
           missionary_application_id?: string | null

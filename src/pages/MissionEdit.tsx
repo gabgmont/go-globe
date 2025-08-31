@@ -24,6 +24,7 @@ interface Mission {
   status: string;
   created_at: string;
   user_id: string;
+  estimated_monthly_income?: number;
 }
 
 interface Progress {
@@ -154,6 +155,8 @@ const MissionEdit = () => {
           location: editedMission.location || mission.location,
           about: editedMission.about || mission.about,
           objectives: editedMission.objectives || mission.objectives,
+          estimated_monthly_income: editedMission.estimated_monthly_income !== undefined ? 
+            editedMission.estimated_monthly_income : mission.estimated_monthly_income,
         })
         .eq('id', mission.id)
         .eq('user_id', user.id);
@@ -391,6 +394,23 @@ const MissionEdit = () => {
                 onChange={(e) => setEditedMission({ ...editedMission, location: e.target.value })}
                 placeholder="Localização da missão"
               />
+            </div>
+            <div className="space-y-2">
+              <Label htmlFor="estimated_monthly_income">Meta de Renda Mensal (R$)</Label>
+              <Input
+                id="estimated_monthly_income"
+                type="number"
+                step="0.01"
+                min="0"
+                value={editedMission.estimated_monthly_income !== undefined ? 
+                  editedMission.estimated_monthly_income.toString() : 
+                  (mission?.estimated_monthly_income || 0).toString()}
+                onChange={(e) => setEditedMission({ ...editedMission, estimated_monthly_income: parseFloat(e.target.value) || 0 })}
+                placeholder="Ex: 5000.00"
+              />
+              <p className="text-xs text-muted-foreground">
+                Valor mensal que você espera arrecadar para sua missão. Quando este valor for atingido, as doações serão limitadas.
+              </p>
             </div>
             <div className="space-y-2">
               <Label htmlFor="about">Sobre</Label>
