@@ -68,7 +68,6 @@ export const useMissionaries = () => {
         const stats = supportStats.get(missionaryId);
         stats.supporters.add(support.user_id);
       
-
         stats.monthlySupport += Number(support.amount);
         
       });

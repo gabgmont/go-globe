@@ -52,8 +52,8 @@ export const ProjectCard = ({
     if (showContributionModal) {
       // Se estamos na página de detalhes do missionário, abre a modal
       console.log('Abrindo modal de contribuição...');
-      window.open('https://buy.stripe.com/test_8x23cx4VbfQ3dgCeXi5J601', "_blank", "noopener,noreferrer")
-      //setIsContributionModalOpen(true);
+      // window.open('https://buy.stripe.com/test_8x23cx4VbfQ3dgCeXi5J601', "_blank", "noopener,noreferrer")
+      setIsContributionModalOpen(true);
     } else {
       // Se estamos na homepage, redireciona para a página do missionário na aba de projetos
       console.log('Redirecionando para página do missionário...');

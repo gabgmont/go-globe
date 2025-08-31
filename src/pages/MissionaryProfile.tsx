@@ -171,9 +171,7 @@ const MissionaryProfile = () => {
       const { data: monthlySupports, error: monthlySupportsError } = await supabase
         .from('missionary_supports')
         .select('amount, is_recurring')
-        .eq('missionary_id', id)
-        .gte('created_at', firstDayOfMonth.toISOString())
-        .lte('created_at', lastDayOfMonth.toISOString());
+        .eq('missionary_id', id);
 
       // Buscar total de apoiadores únicos
       const { data: uniqueSupporters, error: uniqueSupportersError } = await supabase
@@ -470,16 +468,6 @@ const MissionaryProfile = () => {
                 <CardContent className="p-6 text-center">
                   <div className="text-2xl font-bold text-accent mb-2">R$ {missionary.monthlySupport.toLocaleString()}</div>
                   <div className="text-muted-foreground text-sm mb-4">arrecadado este mês</div>
-                  <div className="space-y-2">
-                    <Button variant="support" className="w-full">
-                      <Heart className="w-4 h-4" />
-                      Apoiar Mensalmente
-                    </Button>
-                    <Button variant="outline" className="w-full">
-                      <MessageCircle className="w-4 h-4" />
-                      Enviar Mensagem
-                    </Button>
-                  </div>
                 </CardContent>
               </Card>
             </div>
