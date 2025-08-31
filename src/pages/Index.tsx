@@ -1,7 +1,6 @@
 import { useState } from "react";
 import { Footer } from "@/components/Footer";
 import { Header } from "@/components/Header";
-import { Navigation } from "@/components/Navigation";
 import { StatsSection } from "@/components/StatsSection";
 import { FilterSection } from "@/components/FilterSection";
 import { ProjectCard } from "@/components/ProjectCard";
@@ -453,8 +452,7 @@ const Index = () => {
 
   return (
     <div className="min-h-screen bg-gradient-subtle">
-      <Header />
-      <Navigation activeTab={activeTab} onTabChange={setActiveTab} />
+      <Header activeTab={activeTab} onTabChange={setActiveTab} />
       <main className="py-8">
         {renderContent()}
       </main>

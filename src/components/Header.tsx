@@ -1,7 +1,7 @@
 import { useState } from "react";
 import { Button } from "@/components/ui/button";
-import { Input } from "@/components/ui/input";
-import { Search, LogIn, User } from "lucide-react";
+import { Tabs, TabsList, TabsTrigger } from "@/components/ui/tabs";
+import { LogIn, User, Home, FolderOpen, Users, MapPin, Heart } from "lucide-react";
 import { Link, useNavigate } from "react-router-dom";
 import { Avatar, AvatarFallback, AvatarImage } from "@/components/ui/avatar";
 import { DropdownMenu, DropdownMenuContent, DropdownMenuItem, DropdownMenuTrigger } from "@/components/ui/dropdown-menu";
@@ -9,11 +9,24 @@ import { LoginModal } from "./LoginModal";
 import { ChurchSignupModal } from "./ChurchSignupModal";
 import { useAuth } from "@/hooks/useAuth";
 
-export const Header = () => {
+interface HeaderProps {
+  activeTab?: string;
+  onTabChange?: (tab: string) => void;
+}
+
+export const Header = ({ activeTab = 'inicio', onTabChange }: HeaderProps) => {
   const [loginModalOpen, setLoginModalOpen] = useState(false);
   const [churchSignupModalOpen, setChurchSignupModalOpen] = useState(false);
   const { user, profile, signOut } = useAuth();
   const navigate = useNavigate();
+
+  const tabs = [
+    { id: 'inicio', label: 'Início', icon: Home },
+    { id: 'projetos', label: 'Projetos', icon: FolderOpen },
+    { id: 'missionarios', label: 'Missionários', icon: Users },
+    { id: 'missoes', label: 'Missões', icon: MapPin },
+    { id: 'apoio', label: 'Apoio', icon: Heart },
+  ];
 
   const handleProfileClick = () => {
     navigate('/profile');
@@ -21,33 +34,44 @@ export const Header = () => {
 
   return (
     <header className="bg-gradient-to-r from-primary to-accent text-primary-foreground shadow-lg">
-      <div className="container mx-auto px-4 py-6">
+      <div className="container mx-auto px-4 py-4">
         <div className="flex items-center justify-between">
-          <Link to="/" className="flex items-center gap-3 hover:opacity-80 transition-opacity cursor-pointer">
-            <div className="bg-background/10 p-2 rounded-lg backdrop-blur-sm">
+          {/* Navigation - Left Side */}
+          <div className="flex-1">
+            {onTabChange && (
+              <Tabs value={activeTab} onValueChange={onTabChange} className="w-full max-w-lg">
+                <TabsList className="grid grid-cols-5 bg-secondary/20 border border-background/20">
+                  {tabs.map((tab) => {
+                    const IconComponent = tab.icon;
+                    return (
+                      <TabsTrigger 
+                        key={tab.id} 
+                        value={tab.id}
+                        className="flex items-center gap-1 data-[state=active]:bg-background/20 data-[state=active]:text-primary-foreground transition-all duration-300 text-primary-foreground/80 hover:text-primary-foreground"
+                      >
+                        <IconComponent className="w-4 h-4" />
+                        <span className="hidden lg:inline text-sm">{tab.label}</span>
+                      </TabsTrigger>
+                    );
+                  })}
+                </TabsList>
+              </Tabs>
+            )}
+          </div>
+          
+          {/* Logo - Center */}
+          <div className="flex-1 flex justify-center">
+            <Link to="/" className="hover:opacity-80 transition-opacity">
               <img 
                 src="/lovable-uploads/689fa863-e036-4108-8688-3600761b4c59.png" 
                 alt="World Mission Link Logo" 
-                className="w-8 h-8 object-contain bg-transparent" 
+                className="w-12 h-12 object-contain" 
               />
-            </div>
-            <div>
-              <h1 className="text-2xl font-bold">World Mission Link</h1>
-              <p className="text-primary-foreground/80 text-sm">Conectando corações ao redor do mundo</p>
-            </div>
-          </Link>
-          
-          <div className="hidden md:flex items-center gap-4 flex-1 max-w-md ml-8">
-            <div className="relative flex-1">
-              <Search className="absolute left-3 top-1/2 transform -translate-y-1/2 w-4 h-4 text-muted-foreground" />
-              <Input 
-                placeholder="Buscar missionários, projetos..."
-                className="pl-10 bg-background/10 border-background/20 text-primary-foreground placeholder:text-primary-foreground/60 focus:bg-background/20"
-              />
-            </div>
+            </Link>
           </div>
           
-          <div className="flex items-center gap-3">
+          {/* User Actions - Right Side */}
+          <div className="flex-1 flex justify-end">
             {user ? (
               <DropdownMenu>
                 <DropdownMenuTrigger asChild>
@@ -80,9 +104,10 @@ export const Header = () => {
                   onClick={() => setChurchSignupModalOpen(true)} 
                   variant="outline"
                   size="sm"
+                  className="border-background/20 text-primary-foreground hover:bg-background/10"
                 >
-                  <span className="hidden sm:inline">Cadastrar minha instituição</span>
-                  <span className="sm:hidden">Instituição</span>
+                  <span className="hidden sm:inline">Instituição</span>
+                  <span className="sm:hidden">+</span>
                 </Button>
                 <Button 
                   onClick={() => setLoginModalOpen(true)} 
@@ -94,17 +119,6 @@ export const Header = () => {
                 </Button>
               </div>
             )}
-          </div>
-        </div>
-        
-        {/* Mobile Search */}
-        <div className="md:hidden mt-4">
-          <div className="relative">
-            <Search className="absolute left-3 top-1/2 transform -translate-y-1/2 w-4 h-4 text-muted-foreground" />
-            <Input 
-              placeholder="Buscar missionários, projetos..."
-              className="pl-10 bg-background/10 border-background/20 text-primary-foreground placeholder:text-primary-foreground/60"
-            />
           </div>
         </div>
       </div>
