@@ -74,15 +74,15 @@ const Index = () => {
                 <div className="container mx-auto px-4 text-center">
                   <div className="max-w-4xl mx-auto text-white">
                     <h1 className="text-6xl lg:text-8xl font-black mb-8 leading-tight font-display animate-fade-in">
-                      TRANSFORMANDO
-                      <span className="block bg-gradient-to-r from-primary to-secondary bg-clip-text text-transparent">
+                      <span className="text-white">TRANSFORMANDO</span>
+                      <span className="block text-primary-glow">
                         VIDAS
                       </span>
-                      <span className="block text-5xl lg:text-7xl">
+                      <span className="block text-5xl lg:text-7xl text-white">
                         AO REDOR DO MUNDO
                       </span>
                     </h1>
-                    <p className="text-xl lg:text-2xl mb-12 font-medium opacity-90 animate-fade-in delay-100">
+                    <p className="text-xl lg:text-2xl mb-12 font-medium text-white/90 animate-fade-in delay-100">
                       Conecte-se com missionários dedicados e apoie projetos que fazem a diferença real em comunidades ao redor do mundo.
                     </p>
                     <div className="flex flex-col sm:flex-row gap-6 justify-center animate-fade-in delay-200">
@@ -106,8 +106,8 @@ const Index = () => {
             <section className="container mx-auto px-4">
               <div className="flex items-center justify-between mb-12">
                 <div className="animate-fade-in">
-                  <h3 className="text-4xl lg:text-5xl font-black mb-4 font-display bg-gradient-to-r from-primary to-accent bg-clip-text text-transparent">
-                    Projetos em Destaque
+                  <h3 className="text-4xl lg:text-5xl font-black mb-4 font-display text-foreground">
+                    Projetos em <span className="text-primary">Destaque</span>
                   </h3>
                   <p className="text-lg text-muted-foreground font-medium">Projetos que precisam da sua ajuda agora</p>
                 </div>
@@ -176,10 +176,10 @@ const Index = () => {
               <div className="absolute inset-0 bg-gradient-call-to-action opacity-90" />
               <div className="relative z-10 container mx-auto px-4 py-20 text-center">
                 <div className="max-w-3xl mx-auto text-white">
-                  <h2 className="text-5xl lg:text-6xl font-black mb-6 font-display animate-fade-in">
+                  <h2 className="text-5xl lg:text-6xl font-black mb-6 font-display animate-fade-in text-white">
                     JUNTOS SOMOS MAIS FORTES
                   </h2>
-                  <p className="text-xl lg:text-2xl mb-8 font-medium opacity-90 animate-fade-in delay-100">
+                  <p className="text-xl lg:text-2xl mb-8 font-medium text-white/95 animate-fade-in delay-100">
                     Cada pequena ação gera um grande impacto. Faça parte dessa transformação global e ajude a construir um mundo melhor para todos.
                   </p>
                   <div className="flex flex-col sm:flex-row gap-4 justify-center animate-fade-in delay-200">
@@ -200,8 +200,8 @@ const Index = () => {
             <section className="container mx-auto px-4">
               <div className="flex items-center justify-between mb-12">
                 <div className="animate-fade-in">
-                  <h3 className="text-4xl lg:text-5xl font-black mb-4 font-display bg-gradient-to-r from-secondary to-accent bg-clip-text text-transparent">
-                    Missionários em Destaque
+                  <h3 className="text-4xl lg:text-5xl font-black mb-4 font-display text-foreground">
+                    Missionários em <span className="text-secondary">Destaque</span>
                   </h3>
                   <p className="text-lg text-muted-foreground font-medium">Conheça quem está fazendo a diferença</p>
                 </div>
