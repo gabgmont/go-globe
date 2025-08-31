@@ -447,8 +447,7 @@ const Index = () => {
 
   return (
     <div className="min-h-screen bg-background">
-      <Header />
-      <Navigation activeTab={activeTab} onTabChange={setActiveTab} />
+      <Header activeTab={activeTab} onTabChange={setActiveTab} />
       
       <main className="transition-smooth">
         {renderContent()}
