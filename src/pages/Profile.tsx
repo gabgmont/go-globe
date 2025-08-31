@@ -10,9 +10,11 @@ import { Card, CardContent, CardDescription, CardHeader, CardTitle } from '@/com
 import { Avatar, AvatarFallback, AvatarImage } from '@/components/ui/avatar';
 import { Badge } from '@/components/ui/badge';
 import { AlertDialog, AlertDialogAction, AlertDialogCancel, AlertDialogContent, AlertDialogDescription, AlertDialogFooter, AlertDialogHeader, AlertDialogTitle, AlertDialogTrigger } from '@/components/ui/alert-dialog';
+import { Table, TableBody, TableCell, TableHead, TableHeader, TableRow } from '@/components/ui/table';
+import { Tabs, TabsContent, TabsList, TabsTrigger } from '@/components/ui/tabs';
 import { supabase } from '@/integrations/supabase/client';
 import { useToast } from '@/hooks/use-toast';
-import { CalendarIcon, MapPin, Briefcase, Plus, X, Eye } from 'lucide-react';
+import { CalendarIcon, MapPin, Briefcase, Plus, X, Eye, Heart, CreditCard } from 'lucide-react';
 
 const Profile = () => {
   const navigate = useNavigate();
@@ -23,6 +25,8 @@ const Profile = () => {
   const [loadingApplication, setLoadingApplication] = useState(true);
   const [activeMission, setActiveMission] = useState<any>(null);
   const [loadingMission, setLoadingMission] = useState(true);
+  const [mySupports, setMySupports] = useState<any[]>([]);
+  const [loadingSupports, setLoadingSupports] = useState(true);
   const { toast } = useToast();
 
   // Check if user is church admin and redirect
@@ -55,6 +59,7 @@ const Profile = () => {
     if (user) {
       fetchMissionaryApplication();
       fetchActiveMission();
+      fetchMySupports();
     }
   }, [user]);
 
@@ -152,6 +157,56 @@ const Profile = () => {
       });
     } finally {
       setLoading(false);
+    }
+  };
+
+  const fetchMySupports = async () => {
+    if (!user) return;
+
+    try {
+      const { data, error } = await supabase
+        .from('missionary_supports')
+        .select(`
+          *,
+          missionary_applications!inner (
+            name,
+            photo_url
+          )
+        `)
+        .eq('user_id', user.id)
+        .order('created_at', { ascending: false });
+
+      if (error) throw error;
+      setMySupports(data || []);
+    } catch (error) {
+      console.error('Error fetching supports:', error);
+    } finally {
+      setLoadingSupports(false);
+    }
+  };
+
+  const handleCancelRecurringSupport = async (supportId: string) => {
+    try {
+      const { error } = await supabase
+        .from('missionary_supports')
+        .update({ status: 'cancelled' })
+        .eq('id', supportId);
+
+      if (error) throw error;
+
+      toast({
+        title: "Contribuição cancelada",
+        description: "Sua contribuição recorrente foi cancelada com sucesso.",
+      });
+
+      // Refresh supports list
+      fetchMySupports();
+    } catch (error) {
+      toast({
+        variant: "destructive",
+        title: "Erro",
+        description: "Não foi possível cancelar a contribuição.",
+      });
     }
   };
 
@@ -462,6 +517,229 @@ const Profile = () => {
               </CardContent>
             </Card>
           )}
+
+          {/* Seção de Minhas Contribuições */}
+          <Card>
+            <CardHeader>
+              <CardTitle className="flex items-center gap-2">
+                <Heart className="w-5 h-5" />
+                Minhas Contribuições
+              </CardTitle>
+              <CardDescription>
+                Acompanhe suas contribuições realizadas para missões
+              </CardDescription>
+            </CardHeader>
+            <CardContent>
+              {loadingSupports ? (
+                <div className="text-center text-muted-foreground py-4">
+                  Carregando contribuições...
+                </div>
+              ) : mySupports.length === 0 ? (
+                <div className="text-center text-muted-foreground py-8">
+                  <Heart className="w-12 h-12 mx-auto mb-4 opacity-50" />
+                  <p>Você ainda não fez nenhuma contribuição</p>
+                  <p className="text-sm">Que tal apoiar uma missão hoje?</p>
+                </div>
+              ) : (
+                <Tabs defaultValue="all" className="w-full">
+                  <TabsList className="grid w-full grid-cols-3">
+                    <TabsTrigger value="all">Todas</TabsTrigger>
+                    <TabsTrigger value="one-time">Únicas</TabsTrigger>
+                    <TabsTrigger value="recurring">Recorrentes</TabsTrigger>
+                  </TabsList>
+
+                  <TabsContent value="all">
+                    <Table>
+                      <TableHeader>
+                        <TableRow>
+                          <TableHead>Missionário</TableHead>
+                          <TableHead>Valor</TableHead>
+                          <TableHead>Tipo</TableHead>
+                          <TableHead>Status</TableHead>
+                          <TableHead>Data</TableHead>
+                          <TableHead>Ações</TableHead>
+                        </TableRow>
+                      </TableHeader>
+                      <TableBody>
+                        {mySupports.map((support) => (
+                          <TableRow key={support.id}>
+                            <TableCell className="flex items-center gap-2">
+                              <Avatar className="w-8 h-8">
+                                <AvatarImage src={support.missionary_applications.photo_url} />
+                                <AvatarFallback>
+                                  {support.missionary_applications.name.charAt(0)}
+                                </AvatarFallback>
+                              </Avatar>
+                              <span className="font-medium">{support.missionary_applications.name}</span>
+                            </TableCell>
+                            <TableCell>R$ {Number(support.amount).toFixed(2)}</TableCell>
+                            <TableCell>
+                              <Badge variant={support.is_recurring ? "default" : "secondary"}>
+                                {support.is_recurring ? "Recorrente" : "Única"}
+                              </Badge>
+                            </TableCell>
+                            <TableCell>
+                              <Badge variant={
+                                support.status === 'confirmed' ? "default" :
+                                support.status === 'cancelled' ? "destructive" : "secondary"
+                              }>
+                                {support.status === 'confirmed' ? 'Confirmado' :
+                                 support.status === 'cancelled' ? 'Cancelado' : 'Pendente'}
+                              </Badge>
+                            </TableCell>
+                            <TableCell>
+                              {new Date(support.created_at).toLocaleDateString('pt-BR')}
+                            </TableCell>
+                            <TableCell>
+                              {support.is_recurring && support.status !== 'cancelled' && (
+                                <AlertDialog>
+                                  <AlertDialogTrigger asChild>
+                                    <Button variant="outline" size="sm">
+                                      Cancelar
+                                    </Button>
+                                  </AlertDialogTrigger>
+                                  <AlertDialogContent>
+                                    <AlertDialogHeader>
+                                      <AlertDialogTitle>Cancelar contribuição recorrente</AlertDialogTitle>
+                                      <AlertDialogDescription>
+                                        Tem certeza que deseja cancelar esta contribuição recorrente? 
+                                        Esta ação não pode ser desfeita.
+                                      </AlertDialogDescription>
+                                    </AlertDialogHeader>
+                                    <AlertDialogFooter>
+                                      <AlertDialogCancel>Cancelar</AlertDialogCancel>
+                                      <AlertDialogAction
+                                        onClick={() => handleCancelRecurringSupport(support.id)}
+                                        className="bg-destructive text-destructive-foreground hover:bg-destructive/90"
+                                      >
+                                        Confirmar cancelamento
+                                      </AlertDialogAction>
+                                    </AlertDialogFooter>
+                                  </AlertDialogContent>
+                                </AlertDialog>
+                              )}
+                            </TableCell>
+                          </TableRow>
+                        ))}
+                      </TableBody>
+                    </Table>
+                  </TabsContent>
+
+                  <TabsContent value="one-time">
+                    <Table>
+                      <TableHeader>
+                        <TableRow>
+                          <TableHead>Missionário</TableHead>
+                          <TableHead>Valor</TableHead>
+                          <TableHead>Status</TableHead>
+                          <TableHead>Data</TableHead>
+                        </TableRow>
+                      </TableHeader>
+                      <TableBody>
+                        {mySupports.filter(support => !support.is_recurring).map((support) => (
+                          <TableRow key={support.id}>
+                            <TableCell className="flex items-center gap-2">
+                              <Avatar className="w-8 h-8">
+                                <AvatarImage src={support.missionary_applications.photo_url} />
+                                <AvatarFallback>
+                                  {support.missionary_applications.name.charAt(0)}
+                                </AvatarFallback>
+                              </Avatar>
+                              <span className="font-medium">{support.missionary_applications.name}</span>
+                            </TableCell>
+                            <TableCell>R$ {Number(support.amount).toFixed(2)}</TableCell>
+                            <TableCell>
+                              <Badge variant={
+                                support.status === 'confirmed' ? "default" :
+                                support.status === 'cancelled' ? "destructive" : "secondary"
+                              }>
+                                {support.status === 'confirmed' ? 'Confirmado' :
+                                 support.status === 'cancelled' ? 'Cancelado' : 'Pendente'}
+                              </Badge>
+                            </TableCell>
+                            <TableCell>
+                              {new Date(support.created_at).toLocaleDateString('pt-BR')}
+                            </TableCell>
+                          </TableRow>
+                        ))}
+                      </TableBody>
+                    </Table>
+                  </TabsContent>
+
+                  <TabsContent value="recurring">
+                    <Table>
+                      <TableHeader>
+                        <TableRow>
+                          <TableHead>Missionário</TableHead>
+                          <TableHead>Valor</TableHead>
+                          <TableHead>Status</TableHead>
+                          <TableHead>Data</TableHead>
+                          <TableHead>Ações</TableHead>
+                        </TableRow>
+                      </TableHeader>
+                      <TableBody>
+                        {mySupports.filter(support => support.is_recurring).map((support) => (
+                          <TableRow key={support.id}>
+                            <TableCell className="flex items-center gap-2">
+                              <Avatar className="w-8 h-8">
+                                <AvatarImage src={support.missionary_applications.photo_url} />
+                                <AvatarFallback>
+                                  {support.missionary_applications.name.charAt(0)}
+                                </AvatarFallback>
+                              </Avatar>
+                              <span className="font-medium">{support.missionary_applications.name}</span>
+                            </TableCell>
+                            <TableCell>R$ {Number(support.amount).toFixed(2)}</TableCell>
+                            <TableCell>
+                              <Badge variant={
+                                support.status === 'confirmed' ? "default" :
+                                support.status === 'cancelled' ? "destructive" : "secondary"
+                              }>
+                                {support.status === 'confirmed' ? 'Confirmado' :
+                                 support.status === 'cancelled' ? 'Cancelado' : 'Pendente'}
+                              </Badge>
+                            </TableCell>
+                            <TableCell>
+                              {new Date(support.created_at).toLocaleDateString('pt-BR')}
+                            </TableCell>
+                            <TableCell>
+                              {support.status !== 'cancelled' && (
+                                <AlertDialog>
+                                  <AlertDialogTrigger asChild>
+                                    <Button variant="outline" size="sm">
+                                      Cancelar
+                                    </Button>
+                                  </AlertDialogTrigger>
+                                  <AlertDialogContent>
+                                    <AlertDialogHeader>
+                                      <AlertDialogTitle>Cancelar contribuição recorrente</AlertDialogTitle>
+                                      <AlertDialogDescription>
+                                        Tem certeza que deseja cancelar esta contribuição recorrente? 
+                                        Esta ação não pode ser desfeita.
+                                      </AlertDialogDescription>
+                                    </AlertDialogHeader>
+                                    <AlertDialogFooter>
+                                      <AlertDialogCancel>Cancelar</AlertDialogCancel>
+                                      <AlertDialogAction
+                                        onClick={() => handleCancelRecurringSupport(support.id)}
+                                        className="bg-destructive text-destructive-foreground hover:bg-destructive/90"
+                                      >
+                                        Confirmar cancelamento
+                                      </AlertDialogAction>
+                                    </AlertDialogFooter>
+                                  </AlertDialogContent>
+                                </AlertDialog>
+                              )}
+                            </TableCell>
+                          </TableRow>
+                        ))}
+                      </TableBody>
+                    </Table>
+                  </TabsContent>
+                </Tabs>
+              )}
+            </CardContent>
+          </Card>
         </div>
       </main>
       <Footer />
