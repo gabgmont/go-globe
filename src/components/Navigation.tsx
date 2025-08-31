@@ -18,7 +18,7 @@ export const Navigation = ({ activeTab, onTabChange }: NavigationProps) => {
     <div className="sticky top-0 z-50 bg-background/95 backdrop-blur-sm border-b border-border">
       <div className="container mx-auto px-4 py-3">
         <Tabs value={activeTab} onValueChange={onTabChange} className="w-full">
-          <TabsList className="grid w-full grid-cols-5 lg:max-w-2xl lg:mx-auto bg-secondary/50">
+          <TabsList className="grid w-full grid-cols-5 lg:mx-auto bg-secondary/50">
             {tabs.map((tab) => {
               const IconComponent = tab.icon;
               return (
