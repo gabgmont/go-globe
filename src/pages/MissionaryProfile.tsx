@@ -1,42 +1,205 @@
 import { useParams, useSearchParams } from "react-router-dom";
+import { useState, useEffect } from "react";
 import { Card, CardContent, CardHeader } from "@/components/ui/card";
 import { Button } from "@/components/ui/button";
 import { Badge } from "@/components/ui/badge";
 import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs";
 import { Header } from "@/components/Header";
 import { Footer } from "@/components/Footer";
-import { MapPin, Calendar, Users, Heart, MessageCircle, Target, CheckCircle, Clock, DollarSign, Video, Mail, Phone, Globe } from "lucide-react";
+import { MapPin, Calendar, Users, Heart, MessageCircle, Target, CheckCircle, Clock, DollarSign, Video, Mail, Phone, Globe, Loader2 } from "lucide-react";
+import { supabase } from "@/integrations/supabase/client";
+import { useToast } from "@/hooks/use-toast";
+
+interface MissionaryData {
+  id: string;
+  name: string;
+  location: string;
+  mission: string;
+  startDate: string;
+  supporters: number;
+  monthlySupport: number;
+  avatar: string;
+  specialization: string;
+  status: 'active' | 'preparing' | 'returning';
+  bio?: string;
+  video?: string;
+  email?: string;
+  phone?: string;
+  website?: string;
+  totalGoal: number;
+  currentProgress: number;
+  projectGoals: Array<{
+    id: number;
+    title: string;
+    goal: number;
+    progress: number;
+    description: string;
+  }>;
+}
+
+interface MissionProgressData {
+  id: string;
+  title: string;
+  description: string;
+  created_at: string;
+}
+
+interface MissionProjectData {
+  id: string;
+  name: string;
+  description: string;
+  financial_goal: number;
+  material_goal: number;
+  objective_type: string;
+  status: string;
+  image_url: string;
+}
 
 const MissionaryProfile = () => {
   const { id } = useParams();
   const [searchParams] = useSearchParams();
   const initialTab = searchParams.get('tab') || 'details';
+  const { toast } = useToast();
+  
+  const [missionary, setMissionary] = useState<MissionaryData | null>(null);
+  const [missionProgress, setMissionProgress] = useState<MissionProgressData[]>([]);
+  const [missionProjects, setMissionProjects] = useState<MissionProjectData[]>([]);
+  const [loading, setLoading] = useState(true);
+  const [error, setError] = useState<string | null>(null);
 
-  // Mock data - em uma aplicação real, isso viria de uma API
-  const missionary = {
-    id: id || '1',
-    name: 'Ana Santos',
-    location: 'Amazônia, Brasil',
-    mission: 'Trabalho comunitário com povos indígenas focando em educação infantil e preservação cultural',
-    startDate: 'Jan 2023',
-    supporters: 45,
-    monthlySupport: 3200,
-    avatar: '/src/assets/missionary-1.jpg',
-    specialization: 'Educação Infantil',
-    status: 'active' as const,
-    bio: 'Educadora com 8 anos de experiência em comunidades rurais. Formada em Pedagogia e pós-graduada em Educação Intercultural. Apaixonada por preservação cultural e desenvolvimento comunitário.',
-    video: 'https://example.com/video',
-    email: 'ana.santos@missao.org',
-    phone: '+55 11 99999-9999',
-    website: 'anasantos.missao.org',
-    totalGoal: 50000,
-    currentProgress: 28500,
-    projectGoals: [
-      { id: 1, title: 'Material Escolar', goal: 5000, progress: 4200, description: 'Livros, cadernos e materiais didáticos' },
-      { id: 2, title: 'Equipamentos', goal: 15000, progress: 8500, description: 'Computadores e equipamentos audiovisuais' },
-      { id: 3, title: 'Estrutura', goal: 30000, progress: 15800, description: 'Construção e reforma da escola' }
-    ]
+  useEffect(() => {
+    fetchMissionaryData();
+  }, [id]);
+
+  const fetchMissionaryData = async () => {
+    if (!id) return;
+    
+    try {
+      setLoading(true);
+      setError(null);
+
+      // Buscar dados do missionário
+      const { data: missionaryData, error: missionaryError } = await supabase
+        .from('missionary_applications')
+        .select('*')
+        .eq('id', id)
+        .eq('status', 'approved')
+        .single();
+
+      if (missionaryError) {
+        throw new Error('Missionário não encontrado');
+      }
+
+      // Buscar missão associada
+      const { data: missionData, error: missionError } = await supabase
+        .from('missions')
+        .select('*')
+        .eq('missionary_application_id', id)
+        .single();
+
+      // Buscar progresso da missão
+      let progressData: MissionProgressData[] = [];
+      if (missionData) {
+        const { data: progress, error: progressError } = await supabase
+          .from('mission_progress')
+          .select('*')
+          .eq('mission_id', missionData.id)
+          .order('created_at', { ascending: false });
+
+        if (!progressError && progress) {
+          progressData = progress;
+        }
+      }
+
+      // Buscar projetos da missão
+      let projectsData: MissionProjectData[] = [];
+      if (missionData) {
+        const { data: projects, error: projectsError } = await supabase
+          .from('mission_projects')
+          .select('*')
+          .eq('mission_id', missionData.id)
+          .eq('status', 'active');
+
+        if (!projectsError && projects) {
+          projectsData = projects;
+        }
+      }
+
+      // Transformar dados para o formato esperado
+      const transformedMissionary: MissionaryData = {
+        id: missionaryData.id,
+        name: missionaryData.name,
+        location: missionaryData.current_location,
+        mission: missionData?.about || missionaryData.description,
+        startDate: new Date(missionaryData.start_date).getFullYear().toString(),
+        supporters: Math.floor(Math.random() * 100) + 20, // Temporário
+        monthlySupport: Math.floor(Math.random() * 5000) + 3000, // Temporário
+        avatar: missionaryData.photo_url || '/placeholder.svg',
+        specialization: missionaryData.work_category,
+        status: 'active',
+        bio: missionaryData.additional_info || '',
+        video: missionaryData.presentation_video_url,
+        email: missionaryData.email,
+        phone: missionaryData.phone,
+        website: missionaryData.website,
+        totalGoal: projectsData.reduce((sum, project) => sum + (project.financial_goal || 0), 0) || 50000,
+        currentProgress: Math.floor(Math.random() * 30000) + 15000, // Temporário
+        projectGoals: projectsData.map((project, index) => ({
+          id: index + 1,
+          title: project.name,
+          goal: project.financial_goal || 0,
+          progress: Math.floor(Math.random() * (project.financial_goal || 0)), // Temporário
+          description: project.description || ''
+        }))
+      };
+
+      setMissionary(transformedMissionary);
+      setMissionProgress(progressData);
+      setMissionProjects(projectsData);
+
+    } catch (err: any) {
+      console.error('Error fetching missionary data:', err);
+      setError(err.message);
+      toast({
+        title: "Erro",
+        description: "Não foi possível carregar os dados do missionário",
+        variant: "destructive",
+      });
+    } finally {
+      setLoading(false);
+    }
   };
+
+  if (loading) {
+    return (
+      <div className="min-h-screen bg-gradient-to-br from-background via-background/95 to-secondary/30">
+        <Header />
+        <div className="container mx-auto px-4 py-8 max-w-6xl flex items-center justify-center min-h-[60vh]">
+          <div className="flex flex-col items-center gap-4">
+            <Loader2 className="w-8 h-8 animate-spin" />
+            <p className="text-muted-foreground">Carregando dados do missionário...</p>
+          </div>
+        </div>
+        <Footer />
+      </div>
+    );
+  }
+
+  if (error || !missionary) {
+    return (
+      <div className="min-h-screen bg-gradient-to-br from-background via-background/95 to-secondary/30">
+        <Header />
+        <div className="container mx-auto px-4 py-8 max-w-6xl flex items-center justify-center min-h-[60vh]">
+          <div className="text-center">
+            <h2 className="text-2xl font-bold mb-4">Missionário não encontrado</h2>
+            <p className="text-muted-foreground mb-6">O missionário que você está procurando não foi encontrado ou não está mais ativo.</p>
+            <Button onClick={() => window.history.back()}>Voltar</Button>
+          </div>
+        </div>
+        <Footer />
+      </div>
+    );
+  }
 
   const supportPlans = [
     { id: 1, name: 'Básico', amount: 50, duration: '6 meses', benefits: ['Relatórios mensais', 'Acesso exclusivo ao blog'] },
@@ -51,20 +214,12 @@ const MissionaryProfile = () => {
     { phase: 'Expansão', status: 'pending', description: 'Ampliação para outras comunidades' }
   ];
 
-  const monthlyUpdates = [
-    {
-      id: 1,
-      date: 'Fevereiro 2024',
-      title: 'Progresso na Escola Comunitária',
-      content: 'Neste mês conseguimos finalizar a primeira sala de aula e começamos as atividades com 25 crianças da comunidade. A resposta tem sido muito positiva...'
-    },
-    {
-      id: 2,
-      date: 'Janeiro 2024',
-      title: 'Início das Atividades',
-      content: 'Começamos oficialmente o trabalho na comunidade Yawanawá. O processo de integração cultural tem sido fundamental para o sucesso do projeto...'
-    }
-  ];
+  const monthlyUpdates = missionProgress.map(progress => ({
+    id: progress.id,
+    date: new Date(progress.created_at).toLocaleDateString('pt-BR', { month: 'long', year: 'numeric' }),
+    title: progress.title,
+    content: progress.description
+  }));
 
   return (
     <div className="min-h-screen bg-gradient-to-br from-background via-background/95 to-secondary/30">
@@ -105,19 +260,35 @@ const MissionaryProfile = () => {
               <p className="text-muted-foreground leading-relaxed mb-6">{missionary.bio}</p>
               
               <div className="flex flex-wrap gap-3 justify-center lg:justify-start">
-                <Button variant="outline" size="sm">
-                  <Mail className="w-4 h-4" />
-                </Button>
-                <Button variant="outline" size="sm">
-                  <Phone className="w-4 h-4" />
-                </Button>
-                <Button variant="outline" size="sm">
-                  <Globe className="w-4 h-4" />
-                </Button>
-                <Button variant="outline" size="sm">
-                  <Video className="w-4 h-4" />
-                  Ver Apresentação
-                </Button>
+                {missionary.email && (
+                  <Button variant="outline" size="sm" asChild>
+                    <a href={`mailto:${missionary.email}`}>
+                      <Mail className="w-4 h-4" />
+                    </a>
+                  </Button>
+                )}
+                {missionary.phone && (
+                  <Button variant="outline" size="sm" asChild>
+                    <a href={`tel:${missionary.phone}`}>
+                      <Phone className="w-4 h-4" />
+                    </a>
+                  </Button>
+                )}
+                {missionary.website && (
+                  <Button variant="outline" size="sm" asChild>
+                    <a href={missionary.website} target="_blank" rel="noopener noreferrer">
+                      <Globe className="w-4 h-4" />
+                    </a>
+                  </Button>
+                )}
+                {missionary.video && (
+                  <Button variant="outline" size="sm" asChild>
+                    <a href={missionary.video} target="_blank" rel="noopener noreferrer">
+                      <Video className="w-4 h-4" />
+                      Ver Apresentação
+                    </a>
+                  </Button>
+                )}
               </div>
             </div>
             
@@ -234,16 +405,22 @@ const MissionaryProfile = () => {
                 <p className="text-muted-foreground">Últimas atualizações da missão</p>
               </CardHeader>
               <CardContent className="space-y-6">
-                {monthlyUpdates.map((update) => (
-                  <div key={update.id} className="border-l-4 border-primary pl-6 py-4">
-                    <div className="flex items-center gap-2 mb-2">
-                      <Calendar className="w-4 h-4 text-muted-foreground" />
-                      <span className="text-sm text-muted-foreground">{update.date}</span>
+                {monthlyUpdates.length > 0 ? (
+                  monthlyUpdates.map((update) => (
+                    <div key={update.id} className="border-l-4 border-primary pl-6 py-4">
+                      <div className="flex items-center gap-2 mb-2">
+                        <Calendar className="w-4 h-4 text-muted-foreground" />
+                        <span className="text-sm text-muted-foreground">{update.date}</span>
+                      </div>
+                      <h4 className="font-semibold text-lg mb-2">{update.title}</h4>
+                      <p className="text-muted-foreground leading-relaxed">{update.content}</p>
                     </div>
-                    <h4 className="font-semibold text-lg mb-2">{update.title}</h4>
-                    <p className="text-muted-foreground leading-relaxed">{update.content}</p>
+                  ))
+                ) : (
+                  <div className="text-center py-8">
+                    <p className="text-muted-foreground">Nenhuma atualização disponível ainda.</p>
                   </div>
-                ))}
+                )}
               </CardContent>
             </Card>
           </TabsContent>
@@ -268,34 +445,40 @@ const MissionaryProfile = () => {
                 </div>
                 
                 <div className="grid gap-6">
-                  {missionary.projectGoals.map((goal) => (
-                    <Card key={goal.id} className="border border-secondary/50">
-                      <CardContent className="p-6">
-                        <div className="flex justify-between items-start mb-3">
-                          <h4 className="font-semibold">{goal.title}</h4>
-                          <span className="text-sm text-muted-foreground">
-                            {Math.round((goal.progress / goal.goal) * 100)}%
-                          </span>
-                        </div>
-                        <p className="text-muted-foreground text-sm mb-4">{goal.description}</p>
-                        <div className="w-full bg-secondary rounded-full h-2 mb-3">
-                          <div 
-                            className="bg-gradient-to-r from-primary to-primary-glow h-2 rounded-full"
-                            style={{ width: `${(goal.progress / goal.goal) * 100}%` }}
-                          />
-                        </div>
-                        <div className="flex justify-between items-center">
-                          <span className="text-sm text-muted-foreground">
-                            R$ {goal.progress.toLocaleString()} de R$ {goal.goal.toLocaleString()}
-                          </span>
-                          <Button variant="support" size="sm">
-                            <DollarSign className="w-4 h-4" />
-                            Contribuir
-                          </Button>
-                        </div>
-                      </CardContent>
-                    </Card>
-                  ))}
+                  {missionary.projectGoals.length > 0 ? (
+                    missionary.projectGoals.map((goal) => (
+                      <Card key={goal.id} className="border border-secondary/50">
+                        <CardContent className="p-6">
+                          <div className="flex justify-between items-start mb-3">
+                            <h4 className="font-semibold">{goal.title}</h4>
+                            <span className="text-sm text-muted-foreground">
+                              {goal.goal > 0 ? Math.round((goal.progress / goal.goal) * 100) : 0}%
+                            </span>
+                          </div>
+                          <p className="text-muted-foreground text-sm mb-4">{goal.description}</p>
+                          <div className="w-full bg-secondary rounded-full h-2 mb-3">
+                            <div 
+                              className="bg-gradient-to-r from-primary to-primary-glow h-2 rounded-full"
+                              style={{ width: `${goal.goal > 0 ? (goal.progress / goal.goal) * 100 : 0}%` }}
+                            />
+                          </div>
+                          <div className="flex justify-between items-center">
+                            <span className="text-sm text-muted-foreground">
+                              R$ {goal.progress.toLocaleString()} de R$ {goal.goal.toLocaleString()}
+                            </span>
+                            <Button variant="support" size="sm">
+                              <DollarSign className="w-4 h-4" />
+                              Contribuir
+                            </Button>
+                          </div>
+                        </CardContent>
+                      </Card>
+                    ))
+                  ) : (
+                    <div className="text-center py-8">
+                      <p className="text-muted-foreground">Nenhum projeto de arrecadação cadastrado ainda.</p>
+                    </div>
+                  )}
                 </div>
               </CardContent>
             </Card>
