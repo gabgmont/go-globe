@@ -160,15 +160,6 @@ const Index = () => {
               )}
             </section>
 
-            {/* Interactive Map */}
-            <section className="container mx-auto px-4">
-              <div className="mb-8">
-                <h3 className="text-3xl font-bold mb-2">Mapa Interativo</h3>
-                <p className="text-muted-foreground">Veja onde nossos missionários estão atuando</p>
-              </div>
-              <InteractiveMap />
-            </section>
-
             {/* Featured Missionaries */}
             <section className="container mx-auto px-4">
               <div className="flex items-center justify-between mb-8">
