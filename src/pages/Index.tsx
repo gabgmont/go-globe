@@ -1,5 +1,6 @@
 import { useState } from "react";
 import { Header } from "@/components/Header";
+import { Footer } from "@/components/Footer";
 import { Navigation } from "@/components/Navigation";
 import { StatsSection } from "@/components/StatsSection";
 import { FilterSection } from "@/components/FilterSection";
@@ -336,6 +337,7 @@ const Index = () => {
         {renderContent()}
       </main>
       
+      <Footer />
     </div>
   );
 };
