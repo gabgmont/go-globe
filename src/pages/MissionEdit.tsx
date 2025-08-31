@@ -412,22 +412,37 @@ const MissionEdit = () => {
             <TabsTrigger value="projects">Projetos</TabsTrigger>
           </TabsList>
 
-          {/* Objectives Tab */}
           <TabsContent value="objectives" className="space-y-4">
             <Card>
               <CardHeader>
                 <CardTitle>Objetivos da Missão</CardTitle>
                 <CardDescription>
-                  Descreva os objetivos e metas da sua missão
+                  Descreva os objetivos e metas da sua missão usando formatação Markdown
                 </CardDescription>
               </CardHeader>
-              <CardContent>
-                <Textarea
-                  value={editedMission.objectives || ''}
-                  onChange={(e) => setEditedMission({ ...editedMission, objectives: e.target.value })}
-                  placeholder="Descreva os objetivos da missão"
-                  rows={6}
-                />
+              <CardContent className="space-y-4">
+                <div className="space-y-2">
+                  <Label htmlFor="objectives">Objetivos (Markdown)</Label>
+                  <Textarea
+                    id="objectives"
+                    value={editedMission.objectives || ''}
+                    onChange={(e) => setEditedMission({ ...editedMission, objectives: e.target.value })}
+                    placeholder="Use **negrito**, *itálico*, # Títulos, - listas, etc."
+                    rows={10}
+                    className="font-mono text-sm"
+                  />
+                </div>
+                <div className="text-xs text-muted-foreground space-y-1">
+                  <p><strong>Dicas de formatação Markdown:</strong></p>
+                  <ul className="list-disc list-inside space-y-1 ml-2">
+                    <li>**texto em negrito**</li>
+                    <li>*texto em itálico*</li>
+                    <li># Título principal</li>
+                    <li>## Subtítulo</li>
+                    <li>- Item de lista</li>
+                    <li>1. Lista numerada</li>
+                  </ul>
+                </div>
               </CardContent>
             </Card>
           </TabsContent>

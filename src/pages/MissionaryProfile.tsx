@@ -9,6 +9,7 @@ import { Footer } from "@/components/Footer";
 import { MapPin, Calendar, Users, Heart, MessageCircle, Target, CheckCircle, Clock, DollarSign, Video, Mail, Phone, Globe, Loader2 } from "lucide-react";
 import { supabase } from "@/integrations/supabase/client";
 import { useToast } from "@/hooks/use-toast";
+import ReactMarkdown from 'react-markdown';
 
 interface MissionaryData {
   id: string;
@@ -130,7 +131,7 @@ const MissionaryProfile = () => {
         id: missionaryData.id,
         name: missionaryData.name,
         location: missionaryData.current_location,
-        mission: missionData?.about || missionaryData.description,
+        mission: missionData?.objectives || missionData?.about || missionaryData.description,
         startDate: new Date(missionaryData.start_date).getFullYear().toString(),
         supporters: Math.floor(Math.random() * 100) + 20, // Temporário
         monthlySupport: Math.floor(Math.random() * 5000) + 3000, // Temporário
@@ -365,7 +366,23 @@ const MissionaryProfile = () => {
                     <Target className="w-5 h-5 text-primary" />
                     Objetivos da Missão
                   </h4>
-                  <p className="text-muted-foreground leading-relaxed">{missionary.mission}</p>
+                  <div className="prose prose-sm max-w-none text-muted-foreground">
+                    <ReactMarkdown
+                      components={{
+                        h1: ({ children }) => <h1 className="text-lg font-semibold text-foreground mt-4 mb-2">{children}</h1>,
+                        h2: ({ children }) => <h2 className="text-base font-semibold text-foreground mt-3 mb-2">{children}</h2>,
+                        h3: ({ children }) => <h3 className="text-sm font-semibold text-foreground mt-2 mb-1">{children}</h3>,
+                        p: ({ children }) => <p className="mb-2 leading-relaxed">{children}</p>,
+                        ul: ({ children }) => <ul className="list-disc list-inside mb-2 space-y-1">{children}</ul>,
+                        ol: ({ children }) => <ol className="list-decimal list-inside mb-2 space-y-1">{children}</ol>,
+                        li: ({ children }) => <li className="leading-relaxed">{children}</li>,
+                        strong: ({ children }) => <strong className="font-semibold text-foreground">{children}</strong>,
+                        em: ({ children }) => <em className="italic">{children}</em>,
+                      }}
+                    >
+                      {missionary.mission || "Nenhum objetivo cadastrado ainda."}
+                    </ReactMarkdown>
+                  </div>
                 </div>
                 
                 <div>
