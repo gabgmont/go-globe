@@ -3,6 +3,8 @@ import { Button } from "@/components/ui/button";
 import { Badge } from "@/components/ui/badge";
 import { MapPin, Target, Users, Heart } from "lucide-react";
 import { useNavigate } from "react-router-dom";
+import { useState } from "react";
+import { ProjectContributionModal } from "./ProjectContributionModal";
 
 interface ProjectCardProps {
   id: string;
@@ -34,6 +36,7 @@ export const ProjectCard = ({
   objectiveType
 }: ProjectCardProps) => {
   const navigate = useNavigate();
+  const [isContributionModalOpen, setIsContributionModalOpen] = useState(false);
   const progressPercentage = (progress / goal) * 100;
   const isMaterialDonation = objectiveType === 'material';
 
@@ -109,15 +112,32 @@ export const ProjectCard = ({
       
       <CardFooter className="p-4 pt-2">
         <div className="flex gap-2 w-full">
-          <Button variant="support" className="flex-1">
+          <Button 
+            variant="support" 
+            className="flex-1"
+            onClick={(e) => {
+              e.stopPropagation();
+              setIsContributionModalOpen(true);
+            }}
+          >
             <Heart className="w-4 h-4" />
-            Apoiar
+            Contribuir
           </Button>
           <Button variant="outline" size="sm">
             Ver mais
           </Button>
         </div>
       </CardFooter>
+
+      <ProjectContributionModal
+        isOpen={isContributionModalOpen}
+        onClose={() => setIsContributionModalOpen(false)}
+        projectId={id}
+        projectName={title}
+        projectGoal={goal}
+        currentProgress={progress}
+        isMaterialDonation={isMaterialDonation}
+      />
     </Card>
   );
 };
