@@ -69,7 +69,7 @@ const Index = () => {
                 className="absolute inset-0 bg-cover bg-center"
                 style={{ backgroundImage: `url(${heroImage})` }}
               />
-              <div className="absolute inset-0 bg-gradient-to-r from-black/50 via-transparent to-black/30" />
+              <div className="absolute inset-0 bg-black/50" />
               <div className="relative z-10 h-full flex items-center justify-center">
                 <div className="container mx-auto px-4 text-center">
                   <div className="max-w-4xl mx-auto text-white">
@@ -173,7 +173,7 @@ const Index = () => {
                 className="absolute inset-0 bg-cover bg-center"
                 style={{ backgroundImage: `url(${callToActionBg})` }}
               />
-              <div className="absolute inset-0 bg-gradient-call-to-action opacity-90" />
+              <div className="absolute inset-0 bg-primary/90" />
               <div className="relative z-10 container mx-auto px-4 py-20 text-center">
                 <div className="max-w-3xl mx-auto text-white">
                   <h2 className="text-5xl lg:text-6xl font-black mb-6 font-display animate-fade-in text-white">

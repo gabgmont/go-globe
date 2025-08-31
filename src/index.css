@@ -44,13 +44,6 @@ All colors MUST be HSL.
     --input: 220 13% 91%;
     --ring: 355 85% 65%;
 
-    /* Patreon-inspired gradients */
-    --gradient-primary: linear-gradient(135deg, hsl(355 85% 65%), hsl(180 95% 40%));
-    --gradient-hero: linear-gradient(135deg, hsl(355 85% 65%), hsl(210 100% 35%));
-    --gradient-impact: linear-gradient(135deg, hsl(355 85% 65%), hsl(45 90% 55%));
-    --gradient-vibrant: linear-gradient(135deg, hsl(355 85% 65%), hsl(280 100% 70%));
-    --gradient-call-to-action: linear-gradient(135deg, hsl(355 85% 65%), hsl(180 95% 40%));
-
     /* Dynamic shadows with Patreon colors */
     --shadow-card: 0 4px 6px -1px rgba(0, 0, 0, 0.1), 0 2px 4px -1px rgba(0, 0, 0, 0.06);
     --shadow-card-hover: 0 20px 25px -5px rgba(0, 0, 0, 0.1), 0 10px 10px -5px rgba(0, 0, 0, 0.04);
@@ -141,18 +134,6 @@ All colors MUST be HSL.
     display: -webkit-box;
     -webkit-box-orient: vertical;
     -webkit-line-clamp: 3;
-  }
-  
-  .bg-gradient-hero {
-    background: var(--gradient-hero);
-  }
-  
-  .bg-gradient-vibrant {
-    background: var(--gradient-vibrant);
-  }
-  
-  .bg-gradient-call-to-action {
-    background: var(--gradient-call-to-action);
   }
   
   .shadow-card {
