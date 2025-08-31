@@ -24,7 +24,7 @@ export const useMissionaries = () => {
       setLoading(true);
       setError(null);
 
-      // Buscar aplicações aprovadas de missionários
+      // Buscar aplicações aprovadas de missionários com dados de apoio
       const { data, error: fetchError } = await supabase
         .from('missionary_applications')
         .select(`
@@ -44,19 +44,54 @@ export const useMissionaries = () => {
         throw fetchError;
       }
 
+      // Buscar dados de apoio para cada missionário
+      const missionaryIds = data?.map(app => app.id) || [];
+      const { data: supportsData, error: supportsError } = await supabase
+        .from('missionary_supports')
+        .select('missionary_id, user_id, amount, is_recurring, status')
+        .in('missionary_id', missionaryIds)
+        .eq('status', 'completed');
+
+      if (supportsError) {
+        throw supportsError;
+      }
+
+      // Calcular estatísticas de apoio para cada missionário
+      const supportStats = new Map();
+      supportsData?.forEach(support => {
+        const missionaryId = support.missionary_id;
+        if (!supportStats.has(missionaryId)) {
+          supportStats.set(missionaryId, {
+            supporters: new Set(),
+            monthlySupport: 0
+          });
+        }
+        
+        const stats = supportStats.get(missionaryId);
+        stats.supporters.add(support.user_id);
+        
+        if (support.is_recurring) {
+          stats.monthlySupport += Number(support.amount);
+        }
+      });
+
       // Transformar os dados para o formato esperado
-      const missionariesData = data?.map(application => ({
-        id: application.id,
-        name: application.name,
-        location: application.current_location,
-        mission: application.description,
-        startDate: new Date(application.start_date).getFullYear().toString(),
-        supporters: Math.floor(Math.random() * 100) + 20, // Temporário até implementar sistema de apoio
-        monthlySupport: Math.floor(Math.random() * 5000) + 3000, // Temporário até implementar sistema de apoio
-        avatar: application.photo_url || '/placeholder.svg',
-        specialization: application.work_category,
-        status: 'active' as const
-      })) || [];
+      const missionariesData = data?.map(application => {
+        const stats = supportStats.get(application.id) || { supporters: new Set(), monthlySupport: 0 };
+        
+        return {
+          id: application.id,
+          name: application.name,
+          location: application.current_location,
+          mission: application.description,
+          startDate: new Date(application.start_date).getFullYear().toString(),
+          supporters: stats.supporters.size,
+          monthlySupport: stats.monthlySupport,
+          avatar: application.photo_url || '/placeholder.svg',
+          specialization: application.work_category,
+          status: 'active' as const
+        };
+      }) || [];
 
       setMissionaries(missionariesData);
     } catch (err: any) {
