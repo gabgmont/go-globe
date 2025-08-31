@@ -669,12 +669,6 @@ const MissionaryProfile = () => {
                 <h3 className="text-xl font-semibold">Projeto de Arrecadação</h3>
               </CardHeader>
               <CardContent className="space-y-6">
-                <div className="w-full bg-secondary rounded-full h-3">
-                  <div 
-                    className="bg-gradient-to-r from-accent to-accent-glow h-3 rounded-full transition-all duration-500"
-                    style={{ width: `${(missionary.currentProgress / missionary.totalGoal) * 100}%` }}
-                  />
-                </div>
                 
                 <div className="grid gap-6">
                   {missionary.projectGoals.length > 0 ? (
