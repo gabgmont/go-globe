@@ -1,12 +1,12 @@
 import { useState } from "react";
 import { Button } from "@/components/ui/button";
-import { Tabs, TabsList, TabsTrigger } from "@/components/ui/tabs";
-import { LogIn, User, Home, FolderOpen, Users, MapPin, Heart } from "lucide-react";
+import { LogIn, User } from "lucide-react";
 import { Link, useNavigate } from "react-router-dom";
 import { Avatar, AvatarFallback, AvatarImage } from "@/components/ui/avatar";
 import { DropdownMenu, DropdownMenuContent, DropdownMenuItem, DropdownMenuTrigger } from "@/components/ui/dropdown-menu";
 import { LoginModal } from "./LoginModal";
 import { ChurchSignupModal } from "./ChurchSignupModal";
+import { Navigation } from "./Navigation";
 import { useAuth } from "@/hooks/useAuth";
 
 interface HeaderProps {
@@ -20,12 +20,6 @@ export const Header = ({ activeTab = 'inicio', onTabChange }: HeaderProps) => {
   const { user, profile, signOut } = useAuth();
   const navigate = useNavigate();
 
-  const tabs = [
-    { id: 'inicio', label: 'Início', icon: Home },
-    { id: 'projetos', label: 'Projetos', icon: FolderOpen },
-    { id: 'missionarios', label: 'Missionários', icon: Users },
-  ];
-
   const handleProfileClick = () => {
     navigate('/profile');
   };
@@ -37,23 +31,7 @@ export const Header = ({ activeTab = 'inicio', onTabChange }: HeaderProps) => {
           {/* Navigation - Left Side */}
           <div className="flex-1">
             {onTabChange && (
-              <Tabs value={activeTab} onValueChange={onTabChange} className="w-full max-w-lg">
-                <TabsList className="grid grid-cols-5 bg-secondary/20 border border-background/20">
-                  {tabs.map((tab) => {
-                    const IconComponent = tab.icon;
-                    return (
-                      <TabsTrigger 
-                        key={tab.id} 
-                        value={tab.id}
-                        className="flex items-center gap-1 data-[state=active]:bg-background/20 data-[state=active]:text-primary-foreground transition-all duration-300 text-primary-foreground/80 hover:text-primary-foreground"
-                      >
-                        <IconComponent className="w-4 h-4" />
-                        <span className="hidden lg:inline text-sm">{tab.label}</span>
-                      </TabsTrigger>
-                    );
-                  })}
-                </TabsList>
-              </Tabs>
+              <Navigation activeTab={activeTab} onTabChange={onTabChange} />
             )}
           </div>
           

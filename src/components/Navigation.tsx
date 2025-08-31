@@ -15,26 +15,22 @@ export const Navigation = ({ activeTab, onTabChange }: NavigationProps) => {
   ];
 
   return (
-    <div className="sticky top-0 z-50 bg-background/95 backdrop-blur-sm border-b border-border">
-      <div className="container mx-auto px-4 py-3">
-        <Tabs value={activeTab} onValueChange={onTabChange} className="w-full">
-          <TabsList className="grid w-full grid-cols-5 lg:mx-auto bg-secondary/50">
-            {tabs.map((tab) => {
-              const IconComponent = tab.icon;
-              return (
-                <TabsTrigger 
-                  key={tab.id} 
-                  value={tab.id}
-                  className="flex items-center gap-2 data-[state=active]:bg-primary data-[state=active]:text-primary-foreground transition-all duration-300"
-                >
-                  <IconComponent className="w-4 h-4" />
-                  <span className="hidden sm:inline">{tab.label}</span>
-                </TabsTrigger>
-              );
-            })}
-          </TabsList>
-        </Tabs>
-      </div>
-    </div>
+    <Tabs value={activeTab} onValueChange={onTabChange} className="w-full max-w-lg">
+      <TabsList className="grid grid-cols-3 bg-secondary/20 border border-background/20">
+        {tabs.map((tab) => {
+          const IconComponent = tab.icon;
+          return (
+            <TabsTrigger 
+              key={tab.id} 
+              value={tab.id}
+              className="flex items-center gap-1 data-[state=active]:bg-background/20 data-[state=active]:text-primary-foreground transition-all duration-300 text-primary-foreground/80 hover:text-primary-foreground"
+            >
+              <IconComponent className="w-4 h-4" />
+              <span className="hidden lg:inline text-sm">{tab.label}</span>
+            </TabsTrigger>
+          );
+        })}
+      </TabsList>
+    </Tabs>
   );
 };
