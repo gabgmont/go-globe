@@ -32,7 +32,7 @@ export const FilterSection = ({ activeFilters, onFilterChange }: FilterSectionPr
   };
 
   return (
-    <div className="bg-background border-b border-border sticky top-16 z-40 py-4">
+    <div className="bg-background border-b border-border top-16 z-40 py-4">
       <div className="container mx-auto px-4">
         <div className="flex flex-col lg:flex-row gap-4 items-start lg:items-center">
           <div className="flex items-center gap-2">
@@ -41,20 +41,21 @@ export const FilterSection = ({ activeFilters, onFilterChange }: FilterSectionPr
           </div>
           
           <div className="flex flex-col sm:flex-row gap-3 flex-1">
-            <Select>
-              <SelectTrigger className="w-full sm:w-48">
-                <SelectValue placeholder="Categoria" />
-              </SelectTrigger>
-              <SelectContent>
-                {categories.map((category) => (
-                  <SelectItem key={category} value={category}>
-                    {category}
-                  </SelectItem>
-                ))}
-              </SelectContent>
-            </Select>
+          <Select onValueChange={(value) => toggleFilter(value)}>
+            <SelectTrigger className="w-full sm:w-48">
+              <SelectValue placeholder="Categoria" />
+            </SelectTrigger>
+            <SelectContent>
+              {categories.map((category) => (
+                <SelectItem key={category} value={category}>
+                  {category}
+                </SelectItem>
+              ))}
+            </SelectContent>
+          </Select>
+
             
-            <Select>
+            <Select onValueChange={(value) => toggleFilter(value)}>
               <SelectTrigger className="w-full sm:w-48">
                 <SelectValue placeholder="Localização" />
               </SelectTrigger>
@@ -67,7 +68,7 @@ export const FilterSection = ({ activeFilters, onFilterChange }: FilterSectionPr
               </SelectContent>
             </Select>
             
-            <Select>
+            <Select onValueChange={(value) => toggleFilter(value)}>
               <SelectTrigger className="w-full sm:w-48">
                 <SelectValue placeholder="Status" />
               </SelectTrigger>

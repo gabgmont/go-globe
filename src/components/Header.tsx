@@ -28,24 +28,29 @@ export const Header = ({ activeTab = 'inicio', onTabChange }: HeaderProps) => {
     <header className="bg-gradient-to-r from-primary to-accent text-primary-foreground shadow-lg">
       <div className="container mx-auto px-4 py-4">
         <div className="flex items-center justify-between">
+          
+          {/* Logo - Center */}
+          <div className="flex-1">
+            <Link to="/" className="hover:opacity-80 transition-opacity flex-1 flex gap-2 justify-start">
+              <img 
+                src="/lovable-uploads/689fa863-e036-4108-8688-3600761b4c59.png" 
+                alt="World Mission Link Logo" 
+                className="w-12 h-12 object-contain" 
+              />
+              <div>
+                <p className="font-mono font-semibold text-xl">Go Global</p>
+                <p className="font-mono text-xs">Faça sua doação chegar onde precisa</p>
+              </div>
+            </Link>
+          </div>
+          
           {/* Navigation - Left Side */}
           <div className="flex-1">
             {onTabChange && (
               <Navigation activeTab={activeTab} onTabChange={onTabChange} />
             )}
           </div>
-          
-          {/* Logo - Center */}
-          <div className="flex-1 flex justify-center">
-            <Link to="/" className="hover:opacity-80 transition-opacity">
-              <img 
-                src="/lovable-uploads/689fa863-e036-4108-8688-3600761b4c59.png" 
-                alt="World Mission Link Logo" 
-                className="w-12 h-12 object-contain" 
-              />
-            </Link>
-          </div>
-          
+
           {/* User Actions - Right Side */}
           <div className="flex-1 flex justify-end">
             {user ? (

@@ -261,7 +261,7 @@ const Profile = () => {
       <Header />
       
       <main className="container mx-auto px-4 py-12">
-        <div className="max-w-2xl mx-auto space-y-8">
+        <div className="w-full mx-auto space-y-8">
           <div className="text-center">
             <Avatar className="w-24 h-24 mx-auto mb-4">
               <AvatarImage src={profile?.avatar_url || ''} alt={profile?.display_name || ''} />
@@ -319,205 +319,7 @@ const Profile = () => {
               </form>
             </CardContent>
           </Card>
-
-          {loadingApplication ? (
-            <Card>
-              <CardContent className="p-6">
-                <div className="text-center text-muted-foreground">
-                  Carregando informações...
-                </div>
-              </CardContent>
-            </Card>
-          ) : missionaryApplication ? (
-            <div className="space-y-4">
-              <Card>
-                <CardHeader>
-                  <div className="flex items-center justify-between">
-                    <CardTitle>Minha Aplicação Missionária</CardTitle>
-                    {getStatusBadge(missionaryApplication.status)}
-                  </div>
-                  <CardDescription>
-                    Sua aplicação foi enviada em {new Date(missionaryApplication.created_at).toLocaleDateString('pt-BR')}
-                  </CardDescription>
-                </CardHeader>
-                <CardContent className="space-y-4">
-                  <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
-                    <div className="flex items-center gap-2">
-                      <MapPin className="w-4 h-4 text-muted-foreground" />
-                      <span className="text-sm">{missionaryApplication.current_location}</span>
-                    </div>
-                    <div className="flex items-center gap-2">
-                      <Briefcase className="w-4 h-4 text-muted-foreground" />
-                      <span className="text-sm">{missionaryApplication.work_category}</span>
-                    </div>
-                    <div className="flex items-center gap-2">
-                      <CalendarIcon className="w-4 h-4 text-muted-foreground" />
-                      <span className="text-sm">
-                        Desde {new Date(missionaryApplication.start_date).toLocaleDateString('pt-BR')}
-                      </span>
-                    </div>
-                  </div>
-                  
-                  {missionaryApplication.photo_url && (
-                    <div className="flex justify-center">
-                      <img 
-                        src={missionaryApplication.photo_url} 
-                        alt="Foto do missionário" 
-                        className="w-24 h-24 rounded-full object-cover"
-                      />
-                    </div>
-                  )}
-                  
-                  <div>
-                    <h4 className="font-medium mb-2">Descrição do trabalho:</h4>
-                    <p className="text-sm text-muted-foreground">
-                      {missionaryApplication.description}
-                    </p>
-                  </div>
-
-                  {missionaryApplication.additional_info && (
-                    <div>
-                      <h4 className="font-medium mb-2">Informações adicionais:</h4>
-                      <p className="text-sm text-muted-foreground">
-                        {missionaryApplication.additional_info}
-                      </p>
-                    </div>
-                  )}
-                </CardContent>
-              </Card>
-
-              {loadingMission ? (
-                <Card>
-                  <CardContent className="p-6">
-                    <div className="text-center text-muted-foreground">
-                      Carregando informações da missão...
-                    </div>
-                  </CardContent>
-                </Card>
-              ) : activeMission ? (
-                <Card>
-                  <CardHeader>
-                    <div className="flex items-start justify-between">
-                      <div>
-                        <CardTitle>{activeMission.name}</CardTitle>
-                        <CardDescription>
-                          Criada em {new Date(activeMission.created_at).toLocaleDateString('pt-BR')}
-                        </CardDescription>
-                      </div>
-                      <div className="flex gap-2">
-                        <Button
-                          variant="outline"
-                          size="sm"
-                          onClick={() => navigate(`/mission/${activeMission.id}`)}
-                        >
-                          <Eye className="w-4 h-4 mr-2" />
-                          Visualizar
-                        </Button>
-                        <AlertDialog>
-                          <AlertDialogTrigger asChild>
-                            <Button
-                              variant="outline"
-                              size="sm"
-                              disabled={loading}
-                            >
-                              <X className="w-4 h-4 mr-2" />
-                              Encerrar missão
-                            </Button>
-                          </AlertDialogTrigger>
-                          <AlertDialogContent>
-                            <AlertDialogHeader>
-                              <AlertDialogTitle>Encerrar missão</AlertDialogTitle>
-                              <AlertDialogDescription>
-                                Tem certeza que deseja encerrar esta missão? Esta ação não pode ser desfeita.
-                              </AlertDialogDescription>
-                            </AlertDialogHeader>
-                            <AlertDialogFooter>
-                              <AlertDialogCancel>Cancelar</AlertDialogCancel>
-                              <AlertDialogAction
-                                onClick={handleEndMission}
-                                disabled={loading}
-                                className="bg-destructive text-destructive-foreground hover:bg-destructive/90"
-                              >
-                                {loading ? 'Encerrando...' : 'Encerrar missão'}
-                              </AlertDialogAction>
-                            </AlertDialogFooter>
-                          </AlertDialogContent>
-                        </AlertDialog>
-                      </div>
-                    </div>
-                  </CardHeader>
-                  <CardContent className="space-y-4">
-                    <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
-                      <div className="flex items-center gap-2">
-                        <Briefcase className="w-4 h-4 text-muted-foreground" />
-                        <span className="text-sm">{activeMission.category}</span>
-                      </div>
-                      {activeMission.location && (
-                        <div className="flex items-center gap-2">
-                          <MapPin className="w-4 h-4 text-muted-foreground" />
-                          <span className="text-sm">{activeMission.location}</span>
-                        </div>
-                      )}
-                    </div>
-                    
-                    <div>
-                      <h4 className="font-medium mb-2">Sobre a missão:</h4>
-                      <p className="text-sm text-muted-foreground">
-                        {activeMission.about}
-                      </p>
-                    </div>
-
-                    <div>
-                      <h4 className="font-medium mb-2">Objetivos:</h4>
-                      <p className="text-sm text-muted-foreground">
-                        {activeMission.objectives}
-                      </p>
-                    </div>
-                  </CardContent>
-                </Card>
-              ) : (
-                <Card>
-                  <CardHeader>
-                    <CardTitle className="flex items-center gap-2">
-                      <Plus className="w-5 h-5" />
-                      Nova Missão
-                    </CardTitle>
-                    <CardDescription>
-                      Compartilhe uma nova missão ou trabalho missionário
-                    </CardDescription>
-                  </CardHeader>
-                  <CardContent>
-                    <Button 
-                      onClick={() => window.location.href = '/new-mission'}
-                      className="w-full"
-                      variant="outline"
-                    >
-                      Criar nova missão
-                    </Button>
-                  </CardContent>
-                </Card>
-              )}
-            </div>
-          ) : (
-            <Card>
-              <CardHeader>
-                <CardTitle>Tornar-se Missionário</CardTitle>
-                <CardDescription>
-                  Compartilhe sua vocação e experiência missionária
-                </CardDescription>
-              </CardHeader>
-              <CardContent>
-                <Button 
-                  onClick={() => window.location.href = '/missionary-application'}
-                  className="w-full"
-                  variant="default"
-                >
-                  Quero ser um missionário
-                </Button>
-              </CardContent>
-            </Card>
-          )}
-
+         
           {/* Seção de Minhas Contribuições */}
           <Card>
             <CardHeader>
@@ -740,6 +542,205 @@ const Profile = () => {
               )}
             </CardContent>
           </Card>
+
+          {loadingApplication ? (
+            <Card>
+              <CardContent className="p-6">
+                <div className="text-center text-muted-foreground">
+                  Carregando informações...
+                </div>
+              </CardContent>
+            </Card>
+          ) : missionaryApplication ? (
+            <div className="space-y-4">
+              <Card>
+                <CardHeader>
+                  <div className="flex items-center justify-between">
+                    <CardTitle>Minha Aplicação Missionária</CardTitle>
+                    {getStatusBadge(missionaryApplication.status)}
+                  </div>
+                  <CardDescription>
+                    Sua aplicação foi enviada em {new Date(missionaryApplication.created_at).toLocaleDateString('pt-BR')}
+                  </CardDescription>
+                </CardHeader>
+                <CardContent className="space-y-4">
+                  <div className="flex gap-4">
+                    <div className="flex items-center gap-2">
+                      <MapPin className="w-4 h-4 text-muted-foreground" />
+                      <span className="text-sm">{missionaryApplication.current_location}</span>
+                    </div>
+                    <div className="flex items-center gap-2">
+                      <Briefcase className="w-4 h-4 text-muted-foreground" />
+                      <span className="text-sm">{missionaryApplication.work_category}</span>
+                    </div>
+                    <div className="flex items-center gap-2">
+                      <CalendarIcon className="w-4 h-4 text-muted-foreground" />
+                      <span className="text-sm">
+                        Desde {new Date(missionaryApplication.start_date).toLocaleDateString('pt-BR')}
+                      </span>
+                    </div>
+                  </div>
+                  
+                  {missionaryApplication.photo_url && (
+                    <div className="flex justify-center">
+                      <img 
+                        src={missionaryApplication.photo_url} 
+                        alt="Foto do missionário" 
+                        className="w-24 h-24 rounded-full object-cover"
+                      />
+                    </div>
+                  )}
+                  
+                  <div>
+                    <h4 className="font-medium mb-2">Descrição do trabalho:</h4>
+                    <p className="text-sm text-muted-foreground">
+                      {missionaryApplication.description}
+                    </p>
+                  </div>
+
+                  {missionaryApplication.additional_info && (
+                    <div>
+                      <h4 className="font-medium mb-2">Informações adicionais:</h4>
+                      <p className="text-sm text-muted-foreground">
+                        {missionaryApplication.additional_info}
+                      </p>
+                    </div>
+                  )}
+                </CardContent>
+              </Card>
+
+              {loadingMission ? (
+                <Card>
+                  <CardContent className="p-6">
+                    <div className="text-center text-muted-foreground">
+                      Carregando informações da missão...
+                    </div>
+                  </CardContent>
+                </Card>
+              ) : activeMission ? (
+                <Card>
+                  <CardHeader>
+                    <div className="flex items-start justify-between">
+                      <div>
+                        <CardTitle>{activeMission.name}</CardTitle>
+                        <CardDescription>
+                          Criada em {new Date(activeMission.created_at).toLocaleDateString('pt-BR')}
+                        </CardDescription>
+                      </div>
+                      <div className="flex gap-2">
+                        <Button
+                          variant="outline"
+                          size="sm"
+                          onClick={() => navigate(`/mission/${activeMission.id}`)}
+                        >
+                          <Eye className="w-4 h-4 mr-2" />
+                          Visualizar
+                        </Button>
+                        <AlertDialog>
+                          <AlertDialogTrigger asChild>
+                            <Button
+                              variant="outline"
+                              size="sm"
+                              disabled={loading}
+                            >
+                              <X className="w-4 h-4 mr-2" />
+                              Encerrar missão
+                            </Button>
+                          </AlertDialogTrigger>
+                          <AlertDialogContent>
+                            <AlertDialogHeader>
+                              <AlertDialogTitle>Encerrar missão</AlertDialogTitle>
+                              <AlertDialogDescription>
+                                Tem certeza que deseja encerrar esta missão? Esta ação não pode ser desfeita.
+                              </AlertDialogDescription>
+                            </AlertDialogHeader>
+                            <AlertDialogFooter>
+                              <AlertDialogCancel>Cancelar</AlertDialogCancel>
+                              <AlertDialogAction
+                                onClick={handleEndMission}
+                                disabled={loading}
+                                className="bg-destructive text-destructive-foreground hover:bg-destructive/90"
+                              >
+                                {loading ? 'Encerrando...' : 'Encerrar missão'}
+                              </AlertDialogAction>
+                            </AlertDialogFooter>
+                          </AlertDialogContent>
+                        </AlertDialog>
+                      </div>
+                    </div>
+                  </CardHeader>
+                  <CardContent className="space-y-4">
+                    <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
+                      <div className="flex items-center gap-2">
+                        <Briefcase className="w-4 h-4 text-muted-foreground" />
+                        <span className="text-sm">{activeMission.category}</span>
+                      </div>
+                      {activeMission.location && (
+                        <div className="flex items-center gap-2">
+                          <MapPin className="w-4 h-4 text-muted-foreground" />
+                          <span className="text-sm">{activeMission.location}</span>
+                        </div>
+                      )}
+                    </div>
+                    
+                    <div>
+                      <h4 className="font-medium mb-2">Sobre a missão:</h4>
+                      <p className="text-sm text-muted-foreground">
+                        {activeMission.about}
+                      </p>
+                    </div>
+
+                    <div>
+                      <h4 className="font-medium mb-2">Objetivos:</h4>
+                      <p className="text-sm text-muted-foreground">
+                        {activeMission.objectives}
+                      </p>
+                    </div>
+                  </CardContent>
+                </Card>
+              ) : (
+                <Card>
+                  <CardHeader>
+                    <CardTitle className="flex items-center gap-2">
+                      <Plus className="w-5 h-5" />
+                      Nova Missão
+                    </CardTitle>
+                    <CardDescription>
+                      Compartilhe uma nova missão ou trabalho missionário
+                    </CardDescription>
+                  </CardHeader>
+                  <CardContent>
+                    <Button 
+                      onClick={() => window.location.href = '/new-mission'}
+                      className="w-full"
+                      variant="outline"
+                    >
+                      Criar nova missão
+                    </Button>
+                  </CardContent>
+                </Card>
+              )}
+            </div>
+          ) : (
+            <Card>
+              <CardHeader>
+                <CardTitle>Tornar-se Missionário</CardTitle>
+                <CardDescription>
+                  Compartilhe sua vocação e experiência missionária
+                </CardDescription>
+              </CardHeader>
+              <CardContent>
+                <Button 
+                  onClick={() => window.location.href = '/missionary-application'}
+                  className="w-full"
+                  variant="default"
+                >
+                  Quero ser um missionário
+                </Button>
+              </CardContent>
+            </Card>
+          )}
+
         </div>
       </main>
       <Footer />

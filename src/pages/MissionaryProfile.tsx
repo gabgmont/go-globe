@@ -53,6 +53,8 @@ interface MissionProjectData {
   id: string;
   name: string;
   description: string;
+  progress?: number;
+  supporters?: number;
   financial_goal: number;
   material_goal: number;
   objective_type: string;
@@ -139,6 +141,30 @@ const MissionaryProfile = () => {
         if (!projectsError && projects) {
           projectsData = projects;
         }
+
+        const projectIds = [...new Set(projects?.map(p => p.id) || [])];
+        const { data: projectContributionData, error: projectContributionError } = await supabase.
+          from('project_contributions')
+          .select('id, project_id, user_id, amount')
+          .in('project_id', projectIds)
+  
+        if(projectContributionError) {
+          throw projectContributionError;
+        }
+  
+        const contributionsMap = new Map();
+        projectContributionData.forEach(pc => {
+          if (contributionsMap.has(pc.project_id)) {
+            contributionsMap.set(pc.project_id, contributionsMap.get(pc.project_id) + pc.amount)
+          } else {
+            contributionsMap.set(pc.project_id, pc.amount)
+          }
+        })
+
+        projectsData.forEach((p) => {
+          p.progress = contributionsMap.get(p.id)
+          p.supporters = new Set(projectContributionData.filter(pc => pc.project_id == p.id).map(pc => pc.user_id)).size
+        })
       }
 
       // Buscar apoios do mês corrente
@@ -680,9 +706,9 @@ const MissionaryProfile = () => {
                         location={missionary?.location || 'Localização não informada'}
                         description={project.description || ''}
                         category={missionary?.specialization || 'Categoria não informada'}
-                        progress={0} // Será implementado com contribuições dos projetos
+                        progress={project.progress || 0} // Será implementado com contribuições dos projetos
                         goal={project.financial_goal || project.material_goal || 0}
-                        supporters={0} // Será implementado com contribuições dos projetos
+                        supporters={project.supporters || 0} // Será implementado com contribuições dos projetos
                         image={project.image_url}
                         urgent={false}
                         missionaryId={id}

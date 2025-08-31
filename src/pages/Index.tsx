@@ -1,29 +1,26 @@
-import { useState } from "react";
+import { useEffect, useState } from "react";
 import { Footer } from "@/components/Footer";
 import { Header } from "@/components/Header";
 import { StatsSection } from "@/components/StatsSection";
 import { FilterSection } from "@/components/FilterSection";
 import { ProjectCard } from "@/components/ProjectCard";
 import { MissionaryCard } from "@/components/MissionaryCard";
-import { InteractiveMap } from "@/components/InteractiveMap";
 import { Button } from "@/components/ui/button";
-import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
-import { Badge } from "@/components/ui/badge";
 import { Carousel, CarouselContent, CarouselItem, CarouselPrevious, CarouselNext } from "@/components/ui/carousel";
-import { ArrowRight, Globe, Target, Users, Heart } from "lucide-react";
+import { ArrowRight, Users, Heart } from "lucide-react";
 import { useMissionProjects } from "@/hooks/useMissionProjects";
 import { useMissionaries } from "@/hooks/useMissionaries";
 import heroImage from "@/assets/hero-fullscreen.jpg";
 import communityImage from "@/assets/community-impact.jpg";
+import { useIndicators } from "@/hooks/useIndicators";
 
 const Index = () => {
   const [activeTab, setActiveTab] = useState('inicio');
   const [activeFilters, setActiveFilters] = useState<string[]>([]);
   const { projects, loading: projectsLoading } = useMissionProjects();
   const { missionaries, loading: missionariesLoading } = useMissionaries();
-
-
-
+  const { indicators, loading: indicatorsLoading } = useIndicators();
+  
   const renderContent = () => {
     switch (activeTab) {
       case 'inicio':
@@ -47,28 +44,19 @@ const Index = () => {
                     <p className="text-vibrant mb-12 opacity-95 max-w-3xl mx-auto text-shadow-strong">
                       Conecte-se com missionários dedicados e apoie projetos que fazem a diferença real em comunidades ao redor do mundo
                     </p>
-                    <div className="flex flex-col sm:flex-row gap-6 justify-center">
-                      <Button variant="secondary" size="lg" className="text-lg px-8 py-4 transition-bounce hover:scale-105">
-                        <Heart className="w-6 h-6 mr-2" />
-                        Começar a Apoiar
-                      </Button>
-                      <Button variant="outline" size="lg" className="text-lg px-8 py-4 border-2 border-white text-white hover:bg-white hover:text-primary transition-bounce hover:scale-105">
-                        <Users className="w-6 h-6 mr-2" />
-                        Conhecer Missionários
-                      </Button>
-                    </div>
                   </div>
-                </div>
-              </div>
-              {/* Scroll indicator */}
-              <div className="absolute bottom-8 left-1/2 transform -translate-x-1/2 animate-bounce">
-                <div className="w-6 h-10 border-2 border-white rounded-full flex justify-center">
-                  <div className="w-1 h-3 bg-white rounded-full mt-2 animate-pulse"></div>
                 </div>
               </div>
             </section>
 
-            <StatsSection />
+            {indicators && (
+              <StatsSection
+                activeMissionaries={indicators.activeMissionaries}
+                countriesAchieved={indicators.countriesAchieved}
+                projectsCreated={indicators.projectsCreated}
+                amountFunded={indicators.amountFunded}
+              />
+            )}
 
             {/* Featured Projects */}
             <section className="container mx-auto px-4">
@@ -112,9 +100,9 @@ const Index = () => {
                           location={project.mission?.location || 'Localização não informada'}
                           description={project.description || ''}
                           category={project.mission?.category || 'Categoria não informada'}
-                          progress={0} // Será implementado quando houver sistema de doações
+                          progress={project.progress || 0} // Será implementado quando houver sistema de doações
                           goal={project.financial_goal || project.material_goal || 0}
-                          supporters={0} // Será implementado quando houver sistema de doações
+                          supporters={project.supporters || 0} // Será implementado quando houver sistema de doações
                           image={project.image_url}
                           urgent={false}
                           missionaryId={project.mission?.missionary_application_id || project.mission?.user_id}
@@ -233,7 +221,9 @@ const Index = () => {
                 <p className="text-muted-foreground">Descubra projetos que precisam do seu apoio</p>
               </div>
               <div className="grid md:grid-cols-2 lg:grid-cols-3 gap-6">
-                {projects.map((project) => (
+                {projects
+                  .filter((p) => activeFilters.length == 0 || activeFilters.includes(p.mission.category) || activeFilters.includes(p.name) || activeFilters.includes(p.status) || activeFilters.includes(p.mission.location))
+                  .map((project) => (
                   <ProjectCard
                     key={project.id}
                     id={project.id}
@@ -241,9 +231,9 @@ const Index = () => {
                     location={project.mission?.location || 'Localização não informada'}
                     description={project.description || ''}
                     category={project.mission?.category || 'Categoria não informada'}
-                    progress={0}
+                    progress={project.progress || 0}
                     goal={project.financial_goal || project.material_goal || 0}
-                    supporters={0}
+                    supporters={project.supporters || 0}
                     image={project.image_url}
                     urgent={false}
                     missionaryId={project.mission?.missionary_application_id || project.mission?.user_id}
@@ -281,7 +271,9 @@ const Index = () => {
                 </div>
               ) : missionaries.length > 0 ? (
                 <div className="grid md:grid-cols-2 lg:grid-cols-4 gap-6">
-                  {missionaries.map((missionary) => (
+                  {missionaries
+                  .filter((p) => activeFilters.length == 0 || activeFilters.includes(p.location) || activeFilters.includes(p.name) || activeFilters.includes(p.status))
+                    .map((missionary) => (
                     <MissionaryCard key={missionary.id} {...missionary} />
                   ))}
                 </div>

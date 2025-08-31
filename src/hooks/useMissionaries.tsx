@@ -49,13 +49,11 @@ export const useMissionaries = () => {
       const { data: supportsData, error: supportsError } = await supabase
         .from('missionary_supports')
         .select('missionary_id, user_id, amount, is_recurring, status')
-        .in('missionary_id', missionaryIds)
-        .eq('status', 'completed');
+        .in('missionary_id', missionaryIds);
 
       if (supportsError) {
         throw supportsError;
       }
-
       // Calcular estatísticas de apoio para cada missionário
       const supportStats = new Map();
       supportsData?.forEach(support => {
@@ -66,13 +64,13 @@ export const useMissionaries = () => {
             monthlySupport: 0
           });
         }
-        
+
         const stats = supportStats.get(missionaryId);
         stats.supporters.add(support.user_id);
+      
+
+        stats.monthlySupport += Number(support.amount);
         
-        if (support.is_recurring) {
-          stats.monthlySupport += Number(support.amount);
-        }
       });
 
       // Transformar os dados para o formato esperado
