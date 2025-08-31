@@ -667,12 +667,6 @@ const MissionaryProfile = () => {
             <Card className="bg-gradient-to-br from-card to-card/95 border-0 shadow-card">
               <CardHeader>
                 <h3 className="text-xl font-semibold">Projeto de Arrecadação</h3>
-                <div className="flex justify-between items-center">
-                  <span className="text-muted-foreground">Meta total: R$ {missionary.totalGoal.toLocaleString()}</span>
-                  <span className="font-semibold text-accent">
-                    {Math.round((missionary.currentProgress / missionary.totalGoal) * 100)}% concluído
-                  </span>
-                </div>
               </CardHeader>
               <CardContent className="space-y-6">
                 <div className="w-full bg-secondary rounded-full h-3">
