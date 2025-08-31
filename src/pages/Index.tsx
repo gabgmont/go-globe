@@ -454,7 +454,6 @@ const Index = () => {
         {renderContent()}
       </main>
       
-      <InteractiveMap />
     </div>
   );
 };
