@@ -24,6 +24,32 @@ const Profile = () => {
   const [loadingMission, setLoadingMission] = useState(true);
   const { toast } = useToast();
 
+  // Check if user is church admin and redirect
+  useEffect(() => {
+    const checkIfChurchUser = async () => {
+      if (!user) return;
+      
+      try {
+        const { data, error } = await supabase
+          .from('churches')
+          .select('id')
+          .eq('user_id', user.id)
+          .maybeSingle();
+        
+        if (data) {
+          // User is a church admin, redirect to church profile
+          navigate('/church-profile');
+        }
+      } catch (error) {
+        console.error('Error checking church user:', error);
+      }
+    };
+
+    if (user) {
+      checkIfChurchUser();
+    }
+  }, [user, navigate]);
+
   useEffect(() => {
     if (user) {
       fetchMissionaryApplication();
