@@ -260,13 +260,10 @@ const MissionaryProfile = () => {
   };
 
   const handleAmountChange = (value: string) => {
-    // Remove caracteres não numéricos e limita a um valor razoável
+    // Remove caracteres não numéricos
     const numericValue = value.replace(/\D/g, '');
-    if (numericValue && parseInt(numericValue) >= 10) {
-      setSupportAmount(numericValue);
-    } else if (numericValue === '') {
-      setSupportAmount('');
-    }
+    // Permite valores vazios ou qualquer valor numérico (validação será feita apenas na hora de enviar)
+    setSupportAmount(numericValue);
   };
 
   const isValidAmount = supportAmount && parseInt(supportAmount) >= 10;
