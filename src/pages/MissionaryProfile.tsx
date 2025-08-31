@@ -4,6 +4,8 @@ import { Card, CardContent, CardHeader } from "@/components/ui/card";
 import { Button } from "@/components/ui/button";
 import { Badge } from "@/components/ui/badge";
 import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs";
+import { Input } from "@/components/ui/input";
+import { Label } from "@/components/ui/label";
 import { Header } from "@/components/Header";
 import { Footer } from "@/components/Footer";
 import { MapPin, Calendar, Users, Heart, MessageCircle, Target, CheckCircle, Clock, DollarSign, Video, Mail, Phone, Globe, Loader2 } from "lucide-react";
@@ -67,6 +69,10 @@ const MissionaryProfile = () => {
   const [missionProjects, setMissionProjects] = useState<MissionProjectData[]>([]);
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState<string | null>(null);
+  
+  // Estados para o formulário de apoio
+  const [supportAmount, setSupportAmount] = useState<string>('');
+  const [supportType, setSupportType] = useState<'once' | 'monthly'>('monthly');
 
   useEffect(() => {
     fetchMissionaryData();
@@ -202,11 +208,46 @@ const MissionaryProfile = () => {
     );
   }
 
-  const supportPlans = [
-    { id: 1, name: 'Básico', amount: 50, duration: '6 meses', benefits: ['Relatórios mensais', 'Acesso exclusivo ao blog'] },
-    { id: 2, name: 'Parceiro', amount: 100, duration: '12 meses', benefits: ['Relatórios mensais', 'Chamada trimestral', 'Cartão personalizado'] },
-    { id: 3, name: 'Patrocinador', amount: 200, duration: '24 meses', benefits: ['Todos os benefícios anteriores', 'Visita presencial', 'Participação em decisões'] }
+  const presetOptions = [
+    { amount: 50, type: 'monthly' as const, label: 'R$ 50 mensal' },
+    { amount: 100, type: 'once' as const, label: 'R$ 100 única vez' },
+    { amount: 200, type: 'monthly' as const, label: 'R$ 200 mensal' },
+    { amount: 500, type: 'once' as const, label: 'R$ 500 única vez' }
   ];
+
+  const handlePresetClick = (amount: number, type: 'once' | 'monthly') => {
+    setSupportAmount(amount.toString());
+    setSupportType(type);
+  };
+
+  const handleAmountChange = (value: string) => {
+    // Remove caracteres não numéricos e limita a um valor razoável
+    const numericValue = value.replace(/\D/g, '');
+    if (numericValue && parseInt(numericValue) >= 10) {
+      setSupportAmount(numericValue);
+    } else if (numericValue === '') {
+      setSupportAmount('');
+    }
+  };
+
+  const isValidAmount = supportAmount && parseInt(supportAmount) >= 10;
+
+  const handleSupport = () => {
+    if (!isValidAmount) {
+      toast({
+        title: "Valor inválido",
+        description: "O valor mínimo para apoio é R$ 10,00",
+        variant: "destructive",
+      });
+      return;
+    }
+    
+    // Aqui seria implementada a integração com o sistema de pagamento
+    toast({
+      title: "Redirecionando para pagamento",
+      description: `Processando ${supportType === 'monthly' ? 'apoio mensal' : 'pagamento único'} de R$ ${parseInt(supportAmount).toLocaleString()}`,
+    });
+  };
 
   const missionPhases = [
     { phase: 'Preparação', status: 'completed', description: 'Capacitação e planejamento inicial' },
@@ -314,34 +355,108 @@ const MissionaryProfile = () => {
           </div>
         </div>
 
-        {/* Support Plans */}
+        {/* Support Section */}
         <Card className="mb-8 bg-gradient-to-br from-card to-card/95 border-0 shadow-card">
           <CardHeader>
-            <h2 className="text-2xl font-bold text-center">Planos de Apoio</h2>
-            <p className="text-center text-muted-foreground">Escolha como você gostaria de apoiar esta missão</p>
+            <h2 className="text-2xl font-bold text-center">Apoiar esta Missão</h2>
+            <p className="text-center text-muted-foreground">Escolha o valor e a forma de apoio</p>
           </CardHeader>
-          <CardContent>
-            <div className="grid md:grid-cols-3 gap-6">
-              {supportPlans.map((plan) => (
-                <Card key={plan.id} className="border-2 border-secondary/50 hover:border-primary/50 transition-colors">
-                  <CardContent className="p-6 text-center">
-                    <h3 className="font-semibold text-lg mb-2">{plan.name}</h3>
-                    <div className="text-3xl font-bold text-accent mb-2">R$ {plan.amount}</div>
-                    <div className="text-muted-foreground text-sm mb-4">{plan.duration}</div>
-                    <ul className="space-y-2 text-sm mb-6">
-                      {plan.benefits.map((benefit, index) => (
-                        <li key={index} className="flex items-center gap-2">
-                          <CheckCircle className="w-4 h-4 text-accent" />
-                          {benefit}
-                        </li>
-                      ))}
-                    </ul>
-                    <Button variant="support" className="w-full">
-                      Escolher Plano
-                    </Button>
-                  </CardContent>
-                </Card>
+          <CardContent className="space-y-6">
+            {/* Opções rápidas */}
+            <div className="grid grid-cols-2 md:grid-cols-4 gap-3">
+              {presetOptions.map((option, index) => (
+                <Button
+                  key={index}
+                  variant={supportAmount === option.amount.toString() && supportType === option.type ? "default" : "outline"}
+                  onClick={() => handlePresetClick(option.amount, option.type)}
+                  className="h-auto py-3 px-2 flex flex-col gap-1"
+                >
+                  <span className="font-semibold">{option.label}</span>
+                  <span className="text-xs opacity-75">
+                    {option.type === 'monthly' ? 'Recorrente' : 'Uma vez'}
+                  </span>
+                </Button>
               ))}
+            </div>
+
+            {/* Formulário personalizado */}
+            <div className="grid md:grid-cols-2 gap-6 p-6 bg-secondary/30 rounded-lg">
+              <div className="space-y-4">
+                <div>
+                  <Label htmlFor="amount">Valor personalizado (mínimo R$ 10)</Label>
+                  <div className="relative">
+                    <span className="absolute left-3 top-1/2 transform -translate-y-1/2 text-muted-foreground">R$</span>
+                    <Input
+                      id="amount"
+                      type="text"
+                      value={supportAmount}
+                      onChange={(e) => handleAmountChange(e.target.value)}
+                      placeholder="Digite o valor"
+                      className="pl-10"
+                    />
+                  </div>
+                  {supportAmount && parseInt(supportAmount) < 10 && (
+                    <p className="text-sm text-destructive mt-1">Valor mínimo é R$ 10,00</p>
+                  )}
+                </div>
+
+                <div>
+                  <Label>Tipo de apoio</Label>
+                  <div className="flex gap-3 mt-2">
+                    <Button
+                      variant={supportType === 'monthly' ? "default" : "outline"}
+                      onClick={() => setSupportType('monthly')}
+                      className="flex-1"
+                    >
+                      <Heart className="w-4 h-4 mr-2" />
+                      Mensal
+                    </Button>
+                    <Button
+                      variant={supportType === 'once' ? "default" : "outline"}
+                      onClick={() => setSupportType('once')}
+                      className="flex-1"
+                    >
+                      <DollarSign className="w-4 h-4 mr-2" />
+                      Uma vez
+                    </Button>
+                  </div>
+                </div>
+              </div>
+
+              <div className="flex flex-col justify-between">
+                <div className="space-y-3">
+                  <h4 className="font-semibold">Resumo do apoio</h4>
+                  <div className="space-y-2 text-sm">
+                    <div className="flex justify-between">
+                      <span>Valor:</span>
+                      <span className="font-semibold">
+                        {isValidAmount ? `R$ ${parseInt(supportAmount).toLocaleString()}` : 'R$ 0'}
+                      </span>
+                    </div>
+                    <div className="flex justify-between">
+                      <span>Tipo:</span>
+                      <span className="font-semibold">
+                        {supportType === 'monthly' ? 'Recorrente mensal' : 'Pagamento único'}
+                      </span>
+                    </div>
+                  </div>
+                  {supportType === 'monthly' && isValidAmount && (
+                    <p className="text-xs text-muted-foreground">
+                      Total anual: R$ {(parseInt(supportAmount) * 12).toLocaleString()}
+                    </p>
+                  )}
+                </div>
+
+                <Button 
+                  onClick={handleSupport}
+                  disabled={!isValidAmount}
+                  className="w-full mt-4"
+                  size="lg"
+                >
+                  <Heart className="w-4 h-4 mr-2" />
+                  {supportType === 'monthly' ? 'Apoiar Mensalmente' : 'Fazer Doação'}
+                </Button>
+              </div>
             </div>
           </CardContent>
         </Card>
