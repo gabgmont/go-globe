@@ -8,41 +8,41 @@ All colors MUST be HSL.
 
 @layer base {
   :root {
-    --background: 255 255 255;
-    --foreground: 33 37 41;
+    --background: 28 34% 28%;
+    --foreground: 255 255 255;
 
-    --card: 255 255 255;
-    --card-foreground: 33 37 41;
+    --card: 28 34% 32%;
+    --card-foreground: 255 255 255;
 
-    --popover: 255 255 255;
-    --popover-foreground: 33 37 41;
+    --popover: 28 34% 32%;
+    --popover-foreground: 255 255 255;
 
-    /* Patreon-inspired primary: coral/orange */
-    --primary: 355 85% 65%;
+    /* Accent color: orange */
+    --primary: 28 100% 44%;
     --primary-foreground: 255 255 255;
-    --primary-glow: 355 85% 75%;
+    --primary-glow: 28 100% 54%;
 
-    /* Patreon-inspired secondary: deep blue */
-    --secondary: 210 100% 35%;
+    /* Complementar: dark blue-green */
+    --secondary: 190 20% 18%;
     --secondary-foreground: 255 255 255;
 
-    --muted: 248 250 252;
-    --muted-foreground: 115 115 130;
+    --muted: 28 34% 35%;
+    --muted-foreground: 255 255 255;
 
-    /* Patreon-inspired accent: teal */
-    --accent: 180 95% 40%;
+    /* Accent variation */
+    --accent: 28 100% 44%;
     --accent-foreground: 255 255 255;
-    --accent-glow: 180 95% 50%;
+    --accent-glow: 28 100% 54%;
 
-    --impact: 45 90% 55%;
+    --impact: 28 100% 44%;
     --impact-foreground: 255 255 255;
 
     --destructive: 0 85% 60%;
     --destructive-foreground: 255 255 255;
 
-    --border: 220 13% 91%;
-    --input: 220 13% 91%;
-    --ring: 355 85% 65%;
+    --border: 28 34% 40%;
+    --input: 28 34% 40%;
+    --ring: 28 100% 44%;
 
     /* Dynamic shadows with Patreon colors */
     --shadow-card: 0 4px 6px -1px rgba(0, 0, 0, 0.1), 0 2px 4px -1px rgba(0, 0, 0, 0.06);
