@@ -12,6 +12,7 @@ import { useAuth } from '@/hooks/useAuth';
 import { useToast } from '@/hooks/use-toast';
 import { supabase } from '@/integrations/supabase/client';
 import { ArrowLeft, Save, Plus, Calendar, Briefcase } from 'lucide-react';
+import MDEditor from '@uiw/react-md-editor';
 
 interface Mission {
   id: string;
@@ -417,31 +418,28 @@ const MissionEdit = () => {
               <CardHeader>
                 <CardTitle>Objetivos da Missão</CardTitle>
                 <CardDescription>
-                  Descreva os objetivos e metas da sua missão usando formatação Markdown
+                  Descreva os objetivos e metas da sua missão usando o editor de Markdown
                 </CardDescription>
               </CardHeader>
               <CardContent className="space-y-4">
                 <div className="space-y-2">
-                  <Label htmlFor="objectives">Objetivos (Markdown)</Label>
-                  <Textarea
-                    id="objectives"
-                    value={editedMission.objectives || ''}
-                    onChange={(e) => setEditedMission({ ...editedMission, objectives: e.target.value })}
-                    placeholder="Use **negrito**, *itálico*, # Títulos, - listas, etc."
-                    rows={10}
-                    className="font-mono text-sm"
-                  />
+                  <Label htmlFor="objectives">Objetivos (Editor Markdown)</Label>
+                  <div data-color-mode="light" className="w-full">
+                    <MDEditor
+                      value={editedMission.objectives || ''}
+                      onChange={(value) => setEditedMission({ ...editedMission, objectives: value || '' })}
+                      preview="edit"
+                      hideToolbar={false}
+                      height={400}
+                      data-color-mode="light"
+                      className="w-full"
+                    />
+                  </div>
                 </div>
-                <div className="text-xs text-muted-foreground space-y-1">
-                  <p><strong>Dicas de formatação Markdown:</strong></p>
-                  <ul className="list-disc list-inside space-y-1 ml-2">
-                    <li>**texto em negrito**</li>
-                    <li>*texto em itálico*</li>
-                    <li># Título principal</li>
-                    <li>## Subtítulo</li>
-                    <li>- Item de lista</li>
-                    <li>1. Lista numerada</li>
-                  </ul>
+                <div className="text-xs text-muted-foreground bg-muted/30 p-3 rounded-lg">
+                  <p><strong>Editor de Markdown:</strong></p>
+                  <p>Use a barra de ferramentas acima para formatar o texto ou digite diretamente usando sintaxe Markdown. 
+                  Você pode alternar entre os modos de edição e visualização usando os botões no topo do editor.</p>
                 </div>
               </CardContent>
             </Card>
