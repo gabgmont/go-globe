@@ -229,7 +229,7 @@ const MissionaryProfile = () => {
       <div className="container mx-auto px-4 py-8 max-w-6xl">
         {/* Hero Section */}
         <div className="bg-gradient-to-r from-card to-card/95 rounded-xl shadow-card p-8 mb-8">
-          <div className="flex flex-col lg:flex-row gap-8 items-start">
+          <div className="flex flex-col lg:flex-row gap-8 items-center lg:items-start">
             <div className="flex-shrink-0">
               <div className="w-32 h-32 rounded-full overflow-hidden ring-4 ring-primary/20 mx-auto lg:mx-0">
                 <img src={missionary.avatar} alt={missionary.name} className="w-full h-full object-cover" />
