@@ -8,26 +8,26 @@ All colors MUST be HSL.
 
 @layer base {
   :root {
-    --background: 28 34% 28%;
-    --foreground: 255 255 255;
+    --background: 255 255 255;
+    --foreground: 28 34% 28%;
 
-    --card: 28 34% 32%;
-    --card-foreground: 255 255 255;
+    --card: 255 255 255;
+    --card-foreground: 28 34% 28%;
 
-    --popover: 28 34% 32%;
-    --popover-foreground: 255 255 255;
+    --popover: 255 255 255;
+    --popover-foreground: 28 34% 28%;
 
     /* Accent color: orange */
     --primary: 28 100% 44%;
     --primary-foreground: 255 255 255;
     --primary-glow: 28 100% 54%;
 
-    /* Complementar: dark blue-green */
-    --secondary: 190 20% 18%;
+    /* Secondary: brown #614730 */
+    --secondary: 28 34% 28%;
     --secondary-foreground: 255 255 255;
 
-    --muted: 28 34% 35%;
-    --muted-foreground: 255 255 255;
+    --muted: 248 250 252;
+    --muted-foreground: 115 115 130;
 
     /* Accent variation */
     --accent: 28 100% 44%;
