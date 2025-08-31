@@ -151,7 +151,7 @@ const Index = () => {
                           supporters={0} // Será implementado quando houver sistema de doações
                           image={project.image_url}
                           urgent={false}
-                          missionaryId={project.mission?.user_id}
+                          missionaryId={project.mission?.missionary_application_id || project.mission?.user_id}
                           objectiveType={project.objective_type}
                         />
                       </CarouselItem>
@@ -280,7 +280,7 @@ const Index = () => {
                     supporters={0}
                     image={project.image_url}
                     urgent={false}
-                    missionaryId={project.mission?.user_id}
+                    missionaryId={project.mission?.missionary_application_id || project.mission?.user_id}
                     objectiveType={project.objective_type}
                   />
                 ))}

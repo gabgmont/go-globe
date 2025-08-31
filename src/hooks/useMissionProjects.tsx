@@ -17,6 +17,7 @@ export interface MissionProject {
     location?: string;
     category: string;
     user_id: string;
+    missionary_application_id?: string;
   };
 }
 
@@ -55,7 +56,7 @@ export const useMissionProjects = () => {
       const missionIds = [...new Set(data?.map(p => p.mission_id) || [])];
       const { data: missionsData, error: missionsError } = await supabase
         .from('missions')
-        .select('id, name, location, category, user_id')
+        .select('id, name, location, category, user_id, missionary_application_id')
         .in('id', missionIds);
 
       if (missionsError) {
@@ -72,7 +73,8 @@ export const useMissionProjects = () => {
             name: 'Missão não encontrada',
             location: 'Localização não informada',
             category: 'Categoria não informada',
-            user_id: ''
+            user_id: '',
+            missionary_application_id: ''
           }
         };
       }) || [];
