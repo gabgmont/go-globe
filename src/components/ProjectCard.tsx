@@ -134,9 +134,6 @@ export const ProjectCard = ({
         onClose={() => setIsContributionModalOpen(false)}
         projectId={id}
         projectName={title}
-        projectGoal={goal}
-        currentProgress={progress}
-        isMaterialDonation={isMaterialDonation}
       />
     </Card>
   );

@@ -6,16 +6,14 @@ import { Label } from '@/components/ui/label';
 import { useAuth } from '@/hooks/useAuth';
 import { supabase } from '@/integrations/supabase/client';
 import { useToast } from '@/hooks/use-toast';
-import { Loader2, Heart } from 'lucide-react';
+import { Heart, DollarSign } from 'lucide-react';
 
 interface ProjectContributionModalProps {
   isOpen: boolean;
   onClose: () => void;
   projectId: string;
   projectName: string;
-  projectGoal: number;
-  currentProgress: number;
-  isMaterialDonation?: boolean;
+  onContributionSuccess?: () => void;
 }
 
 export const ProjectContributionModal = ({
@@ -23,18 +21,17 @@ export const ProjectContributionModal = ({
   onClose,
   projectId,
   projectName,
-  projectGoal,
-  currentProgress,
-  isMaterialDonation = false
+  onContributionSuccess
 }: ProjectContributionModalProps) => {
   const [amount, setAmount] = useState('');
   const [loading, setLoading] = useState(false);
   const { user } = useAuth();
   const { toast } = useToast();
 
-  const handleAmountChange = (e: React.ChangeEvent<HTMLInputElement>) => {
-    const value = e.target.value.replace(/[^0-9.,]/g, '');
-    setAmount(value);
+  const handleAmountChange = (value: string) => {
+    // Remove qualquer caractere que não seja número ou vírgula/ponto
+    const cleanValue = value.replace(/[^\d.,]/g, '');
+    setAmount(cleanValue);
   };
 
   const handleContribute = async () => {
@@ -49,36 +46,16 @@ export const ProjectContributionModal = ({
 
     const numericAmount = parseFloat(amount.replace(',', '.'));
     
-    if (!numericAmount || numericAmount <= 0) {
+    if (!numericAmount || numericAmount < 10) {
       toast({
         variant: "destructive",
         title: "Valor inválido",
-        description: "Por favor, insira um valor válido para contribuição.",
-      });
-      return;
-    }
-
-    // Verificar se a contribuição não excede a meta
-    if (currentProgress + numericAmount > projectGoal) {
-      toast({
-        variant: "destructive",
-        title: "Valor excede a meta",
-        description: `A contribuição não pode exceder a meta do projeto. Valor máximo: ${isMaterialDonation ? (projectGoal - currentProgress).toFixed(0) : `R$ ${(projectGoal - currentProgress).toFixed(2)}`}`,
-      });
-      return;
-    }
-
-    if (!isMaterialDonation && numericAmount < 10) {
-      toast({
-        variant: "destructive",
-        title: "Valor mínimo",
-        description: "O valor mínimo de contribuição é R$ 10,00.",
+        description: "O valor mínimo para contribuição é R$ 10,00.",
       });
       return;
     }
 
     setLoading(true);
-    
     try {
       const { error } = await supabase
         .from('project_contributions')
@@ -87,18 +64,19 @@ export const ProjectContributionModal = ({
           project_id: projectId,
           amount: numericAmount,
           status: 'confirmed',
-          payment_method: 'online'
+          payment_method: 'digital'
         });
 
       if (error) throw error;
 
       toast({
         title: "Contribuição realizada!",
-        description: `Obrigado por contribuir para o projeto "${projectName}".`,
+        description: `Obrigado por contribuir com R$ ${numericAmount.toFixed(2)} para ${projectName}!`,
       });
 
-      setAmount('');
+      onContributionSuccess?.();
       onClose();
+      setAmount('');
     } catch (error) {
       console.error('Error creating contribution:', error);
       toast({
@@ -111,65 +89,60 @@ export const ProjectContributionModal = ({
     }
   };
 
-  const remainingAmount = projectGoal - currentProgress;
-  const formatCurrency = (value: number) => isMaterialDonation ? value.toFixed(0) : `R$ ${value.toFixed(2)}`;
-
   return (
     <Dialog open={isOpen} onOpenChange={onClose}>
-      <DialogContent className="sm:max-w-[425px]">
+      <DialogContent className="sm:max-w-md">
         <DialogHeader>
           <DialogTitle className="flex items-center gap-2">
             <Heart className="w-5 h-5 text-primary" />
-            Contribuir para o Projeto
+            Contribuir com Projeto
           </DialogTitle>
           <DialogDescription>
-            {projectName}
+            Faça sua contribuição para <strong>{projectName}</strong>
           </DialogDescription>
         </DialogHeader>
-        
-        <div className="grid gap-4 py-4">
-          <div className="grid gap-2">
-            <Label htmlFor="amount">
-              {isMaterialDonation ? 'Quantidade' : 'Valor da contribuição'}
-            </Label>
-            <Input
-              id="amount"
-              type="text"
-              placeholder={isMaterialDonation ? "Ex: 5" : "Ex: 50,00"}
-              value={amount}
-              onChange={handleAmountChange}
-              className="text-right"
-            />
-            {!isMaterialDonation && (
-              <p className="text-xs text-muted-foreground">
-                Valor mínimo: R$ 10,00
-              </p>
-            )}
-          </div>
-          
-          <div className="bg-muted p-3 rounded-lg">
-            <div className="flex justify-between text-sm">
-              <span>Meta do projeto:</span>
-              <span className="font-medium">{formatCurrency(projectGoal)}</span>
+
+        <div className="space-y-4 py-4">
+          <div className="space-y-2">
+            <Label htmlFor="amount">Valor da contribuição</Label>
+            <div className="relative">
+              <DollarSign className="absolute left-3 top-1/2 transform -translate-y-1/2 text-muted-foreground w-4 h-4" />
+              <Input
+                id="amount"
+                type="text"
+                placeholder="0,00"
+                value={amount}
+                onChange={(e) => handleAmountChange(e.target.value)}
+                className="pl-10"
+              />
             </div>
-            <div className="flex justify-between text-sm">
-              <span>Progresso atual:</span>
-              <span className="font-medium">{formatCurrency(currentProgress)}</span>
-            </div>
-            <div className="flex justify-between text-sm">
-              <span>Restante:</span>
-              <span className="font-medium text-primary">{formatCurrency(remainingAmount)}</span>
-            </div>
+            <p className="text-sm text-muted-foreground">
+              Valor mínimo: R$ 10,00
+            </p>
           </div>
         </div>
 
-        <DialogFooter>
-          <Button variant="outline" onClick={onClose} disabled={loading}>
+        <DialogFooter className="gap-2">
+          <Button
+            variant="outline"
+            onClick={onClose}
+            disabled={loading}
+          >
             Cancelar
           </Button>
-          <Button onClick={handleContribute} disabled={loading || !amount}>
-            {loading && <Loader2 className="mr-2 h-4 w-4 animate-spin" />}
-            Confirmar Contribuição
+          <Button
+            onClick={handleContribute}
+            disabled={loading || !amount}
+            className="flex items-center gap-2"
+          >
+            {loading ? (
+              'Processando...'
+            ) : (
+              <>
+                <Heart className="w-4 h-4" />
+                Contribuir
+              </>
+            )}
           </Button>
         </DialogFooter>
       </DialogContent>
