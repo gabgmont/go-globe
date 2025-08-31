@@ -16,14 +16,14 @@ export const Navigation = ({ activeTab, onTabChange }: NavigationProps) => {
 
   return (
     <Tabs value={activeTab} onValueChange={onTabChange} className="w-full">
-      <TabsList className="flex w-fit bg-background/10 backdrop-blur-sm">
+      <TabsList className="flex w-fit  backdrop-blur-sm">
         {tabs.map((tab) => {
           const IconComponent = tab.icon;
           return (
             <TabsTrigger 
               key={tab.id} 
               value={tab.id}
-              className="flex items-center gap-2 data-[state=active]:bg-background/20 data-[state=active]:text-primary-foreground transition-all duration-300 text-primary-foreground/80 hover:text-primary-foreground"
+              className="flex items-center gap-2 data-[state=active]:outline outline-black-500 data-[state=active]:text-primary-foreground transition-all duration-300 text-primary-foreground/80 hover:text-primary-foreground"
             >
               <IconComponent className="w-4 h-4" />
               <span className="hidden lg:inline">{tab.label}</span>
