@@ -19,6 +19,7 @@ interface ProjectCardProps {
   urgent?: boolean;
   missionaryId?: string;
   objectiveType?: string;
+  showContributionModal?: boolean; // Novo prop para controlar se deve mostrar modal ou redirecionar
 }
 
 export const ProjectCard = ({
@@ -33,7 +34,8 @@ export const ProjectCard = ({
   image,
   urgent = false,
   missionaryId = "1",
-  objectiveType
+  objectiveType,
+  showContributionModal = false
 }: ProjectCardProps) => {
   const navigate = useNavigate();
   const [isContributionModalOpen, setIsContributionModalOpen] = useState(false);
@@ -41,7 +43,21 @@ export const ProjectCard = ({
   const isMaterialDonation = objectiveType === 'material';
 
   const handleProjectClick = () => {
-    navigate(`/missionary/${missionaryId}?tab=project`);
+    navigate(`/missionary/${missionaryId}?tab=projects`);
+  };
+
+  const handleContributeClick = (e: React.MouseEvent) => {
+    e.stopPropagation();
+    
+    if (showContributionModal) {
+      // Se estamos na página de detalhes do missionário, abre a modal
+      console.log('Abrindo modal de contribuição...');
+      setIsContributionModalOpen(true);
+    } else {
+      // Se estamos na homepage, redireciona para a página do missionário na aba de projetos
+      console.log('Redirecionando para página do missionário...');
+      navigate(`/missionary/${missionaryId}?tab=projects`);
+    }
   };
 
   return (
@@ -115,11 +131,7 @@ export const ProjectCard = ({
           <Button 
             variant="support" 
             className="flex-1"
-            onClick={(e) => {
-              e.stopPropagation();
-              console.log('Botão contribuir clicado, abrindo modal...');
-              setIsContributionModalOpen(true);
-            }}
+            onClick={handleContributeClick}
           >
             <Heart className="w-4 h-4" />
             Contribuir
@@ -137,12 +149,14 @@ export const ProjectCard = ({
         </div>
       </CardFooter>
 
-      <ProjectContributionModal
-        isOpen={isContributionModalOpen}
-        onClose={() => setIsContributionModalOpen(false)}
-        projectId={id}
-        projectName={title}
-      />
+      {showContributionModal && (
+        <ProjectContributionModal
+          isOpen={isContributionModalOpen}
+          onClose={() => setIsContributionModalOpen(false)}
+          projectId={id}
+          projectName={title}
+        />
+      )}
     </Card>
   );
 };

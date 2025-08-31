@@ -12,6 +12,7 @@ import { MapPin, Calendar, Users, Heart, MessageCircle, Target, CheckCircle, Clo
 import { supabase } from "@/integrations/supabase/client";
 import { useToast } from "@/hooks/use-toast";
 import ReactMarkdown from 'react-markdown';
+import { ProjectCard } from '@/components/ProjectCard';
 
 interface MissionaryData {
   id: string;
@@ -666,42 +667,31 @@ const MissionaryProfile = () => {
           <TabsContent value="project" className="space-y-6">
             <Card className="bg-gradient-to-br from-card to-card/95 border-0 shadow-card">
               <CardHeader>
-                <h3 className="text-xl font-semibold">Projeto de Arrecadação</h3>
+                <h3 className="text-xl font-semibold">Projetos de Arrecadação</h3>
               </CardHeader>
               <CardContent className="space-y-6">
-                
-                <div className="grid gap-6">
-                  {missionary.projectGoals.length > 0 ? (
-                    missionary.projectGoals.map((goal) => (
-                      <Card key={goal.id} className="border border-secondary/50">
-                        <CardContent className="p-6">
-                          <div className="flex justify-between items-start mb-3">
-                            <h4 className="font-semibold">{goal.title}</h4>
-                            <span className="text-sm text-muted-foreground">
-                              {goal.goal > 0 ? Math.round((goal.progress / goal.goal) * 100) : 0}%
-                            </span>
-                          </div>
-                          <p className="text-muted-foreground text-sm mb-4">{goal.description}</p>
-                          <div className="w-full bg-secondary rounded-full h-2 mb-3">
-                            <div 
-                              className="bg-gradient-to-r from-primary to-primary-glow h-2 rounded-full"
-                              style={{ width: `${goal.goal > 0 ? (goal.progress / goal.goal) * 100 : 0}%` }}
-                            />
-                          </div>
-                          <div className="flex justify-between items-center">
-                            <span className="text-sm text-muted-foreground">
-                              R$ {goal.progress.toLocaleString()} de R$ {goal.goal.toLocaleString()}
-                            </span>
-                            <Button variant="support" size="sm">
-                              <DollarSign className="w-4 h-4" />
-                              Contribuir
-                            </Button>
-                          </div>
-                        </CardContent>
-                      </Card>
+                <div className="grid gap-6 md:grid-cols-2">
+                  {missionProjects.length > 0 ? (
+                    missionProjects.map((project) => (
+                      <ProjectCard
+                        key={project.id}
+                        id={project.id}
+                        title={project.name}
+                        location={missionary?.location || 'Localização não informada'}
+                        description={project.description || ''}
+                        category={missionary?.specialization || 'Categoria não informada'}
+                        progress={0} // Será implementado com contribuições dos projetos
+                        goal={project.financial_goal || project.material_goal || 0}
+                        supporters={0} // Será implementado com contribuições dos projetos
+                        image={project.image_url}
+                        urgent={false}
+                        missionaryId={id}
+                        objectiveType={project.objective_type}
+                        showContributionModal={true} // Habilita a modal nesta página
+                      />
                     ))
                   ) : (
-                    <div className="text-center py-8">
+                    <div className="col-span-2 text-center py-8">
                       <p className="text-muted-foreground">Nenhum projeto de arrecadação cadastrado ainda.</p>
                     </div>
                   )}
