@@ -13,7 +13,8 @@ import { Carousel, CarouselContent, CarouselItem, CarouselPrevious, CarouselNext
 import { ArrowRight, Globe, Target, Users, Heart } from "lucide-react";
 import { useMissionProjects } from "@/hooks/useMissionProjects";
 import { useMissionaries } from "@/hooks/useMissionaries";
-import heroImage from "@/assets/hero-missions.jpg";
+import heroImage from "@/assets/hero-fullscreen.jpg";
+import callToActionBg from "@/assets/call-to-action-bg.jpg";
 
 const Index = () => {
   const [activeTab, setActiveTab] = useState('inicio');
@@ -61,32 +62,36 @@ const Index = () => {
     switch (activeTab) {
       case 'inicio':
         return (
-          <div className="space-y-12">
+          <div className="space-y-16">
             {/* Hero Section */}
-            <section className="relative h-96 lg:h-[500px] overflow-hidden rounded-xl shadow-hero">
+            <section className="relative h-screen overflow-hidden">
               <div 
                 className="absolute inset-0 bg-cover bg-center"
                 style={{ backgroundImage: `url(${heroImage})` }}
               />
-              <div className="absolute inset-0 bg-gradient-to-r from-primary/80 to-accent/60" />
-              <div className="relative z-10 h-full flex items-center">
-                <div className="container mx-auto px-4">
-                  <div className="max-w-2xl text-primary-foreground">
-                    <h2 className="text-4xl lg:text-6xl font-bold mb-6 leading-tight">
-                      Transformando
-                      <span className="block text-accent-glow">Vidas ao Redor</span>
-                      do Mundo
-                    </h2>
-                    <p className="text-lg lg:text-xl mb-8 opacity-90">
-                      Conecte-se com missionários dedicados e apoie projetos que fazem a diferença em comunidades ao redor do mundo.
+              <div className="absolute inset-0 bg-gradient-to-r from-black/50 via-transparent to-black/30" />
+              <div className="relative z-10 h-full flex items-center justify-center">
+                <div className="container mx-auto px-4 text-center">
+                  <div className="max-w-4xl mx-auto text-white">
+                    <h1 className="text-6xl lg:text-8xl font-black mb-8 leading-tight font-display animate-fade-in">
+                      TRANSFORMANDO
+                      <span className="block bg-gradient-to-r from-primary to-secondary bg-clip-text text-transparent">
+                        VIDAS
+                      </span>
+                      <span className="block text-5xl lg:text-7xl">
+                        AO REDOR DO MUNDO
+                      </span>
+                    </h1>
+                    <p className="text-xl lg:text-2xl mb-12 font-medium opacity-90 animate-fade-in delay-100">
+                      Conecte-se com missionários dedicados e apoie projetos que fazem a diferença real em comunidades ao redor do mundo.
                     </p>
-                    <div className="flex flex-col sm:flex-row gap-4">
-                      <Button variant="hero" size="xl">
-                        <Heart className="w-5 h-5" />
-                        Começar a Apoiar
+                    <div className="flex flex-col sm:flex-row gap-6 justify-center animate-fade-in delay-200">
+                      <Button size="lg" className="text-lg px-8 py-4 bg-primary hover:bg-primary/90 shadow-vibrant animate-pulse-glow font-semibold">
+                        <Heart className="w-6 h-6 mr-2" />
+                        Começar a Apoiar Agora
                       </Button>
-                      <Button variant="secondary" size="xl">
-                        <Users className="w-5 h-5" />
+                      <Button variant="outline" size="lg" className="text-lg px-8 py-4 border-2 border-white text-white hover:bg-white hover:text-primary font-semibold">
+                        <Users className="w-6 h-6 mr-2" />
                         Conhecer Missionários
                       </Button>
                     </div>
@@ -99,14 +104,16 @@ const Index = () => {
 
             {/* Featured Projects */}
             <section className="container mx-auto px-4">
-              <div className="flex items-center justify-between mb-8">
-                <div>
-                  <h3 className="text-3xl font-bold mb-2">Projetos em Destaque</h3>
-                  <p className="text-muted-foreground">Projetos que precisam da sua ajuda agora</p>
+              <div className="flex items-center justify-between mb-12">
+                <div className="animate-fade-in">
+                  <h3 className="text-4xl lg:text-5xl font-black mb-4 font-display bg-gradient-to-r from-primary to-accent bg-clip-text text-transparent">
+                    Projetos em Destaque
+                  </h3>
+                  <p className="text-lg text-muted-foreground font-medium">Projetos que precisam da sua ajuda agora</p>
                 </div>
-                <Button variant="outline" onClick={() => setActiveTab('projetos')}>
+                <Button variant="outline" onClick={() => setActiveTab('projetos')} className="border-2 hover:border-primary hover:text-primary font-semibold">
                   Ver Todos
-                  <ArrowRight className="w-4 h-4" />
+                  <ArrowRight className="w-4 h-4 ml-2" />
                 </Button>
               </div>
               
@@ -160,16 +167,47 @@ const Index = () => {
               )}
             </section>
 
+            {/* Call to Action Section */}
+            <section className="relative min-h-[400px] overflow-hidden">
+              <div 
+                className="absolute inset-0 bg-cover bg-center"
+                style={{ backgroundImage: `url(${callToActionBg})` }}
+              />
+              <div className="absolute inset-0 bg-gradient-call-to-action opacity-90" />
+              <div className="relative z-10 container mx-auto px-4 py-20 text-center">
+                <div className="max-w-3xl mx-auto text-white">
+                  <h2 className="text-5xl lg:text-6xl font-black mb-6 font-display animate-fade-in">
+                    JUNTOS SOMOS MAIS FORTES
+                  </h2>
+                  <p className="text-xl lg:text-2xl mb-8 font-medium opacity-90 animate-fade-in delay-100">
+                    Cada pequena ação gera um grande impacto. Faça parte dessa transformação global e ajude a construir um mundo melhor para todos.
+                  </p>
+                  <div className="flex flex-col sm:flex-row gap-4 justify-center animate-fade-in delay-200">
+                    <Button size="lg" variant="outline" className="text-lg px-8 py-4 border-2 border-white text-white hover:bg-white hover:text-primary font-semibold">
+                      <Target className="w-6 h-6 mr-2" />
+                      Fazer Doação
+                    </Button>
+                    <Button size="lg" className="text-lg px-8 py-4 bg-white text-primary hover:bg-white/90 font-semibold">
+                      <Globe className="w-6 h-6 mr-2" />
+                      Ser Voluntário
+                    </Button>
+                  </div>
+                </div>
+              </div>
+            </section>
+
             {/* Featured Missionaries */}
             <section className="container mx-auto px-4">
-              <div className="flex items-center justify-between mb-8">
-                <div>
-                  <h3 className="text-3xl font-bold mb-2">Missionários em Destaque</h3>
-                  <p className="text-muted-foreground">Conheça quem está fazendo a diferença</p>
+              <div className="flex items-center justify-between mb-12">
+                <div className="animate-fade-in">
+                  <h3 className="text-4xl lg:text-5xl font-black mb-4 font-display bg-gradient-to-r from-secondary to-accent bg-clip-text text-transparent">
+                    Missionários em Destaque
+                  </h3>
+                  <p className="text-lg text-muted-foreground font-medium">Conheça quem está fazendo a diferença</p>
                 </div>
-                <Button variant="outline" onClick={() => setActiveTab('missionarios')}>
+                <Button variant="outline" onClick={() => setActiveTab('missionarios')} className="border-2 hover:border-secondary hover:text-secondary font-semibold">
                   Ver Todos
-                  <ArrowRight className="w-4 h-4" />
+                  <ArrowRight className="w-4 h-4 ml-2" />
                 </Button>
               </div>
               {missionariesLoading ? (
@@ -408,25 +446,15 @@ const Index = () => {
   };
 
   return (
-    <div className="min-h-screen bg-gradient-subtle">
+    <div className="min-h-screen bg-background">
       <Header />
       <Navigation activeTab={activeTab} onTabChange={setActiveTab} />
-      <main className="py-8">
+      
+      <main className="transition-smooth">
         {renderContent()}
       </main>
       
-      {/* Footer */}
-      <footer className="bg-primary text-primary-foreground py-8 mt-12">
-        <div className="container mx-auto px-4 text-center">
-          <div className="flex items-center justify-center gap-2 mb-4">
-            <Globe className="w-6 h-6" />
-            <span className="text-xl font-bold">World Mission Link</span>
-          </div>
-          <p className="text-primary-foreground/80">
-            Conectando corações, transformando vidas © 2024
-          </p>
-        </div>
-      </footer>
+      <InteractiveMap />
     </div>
   );
 };
