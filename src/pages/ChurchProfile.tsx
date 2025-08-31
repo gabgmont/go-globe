@@ -33,10 +33,6 @@ export default function ChurchProfile() {
         primaryColor: church.primary_color,
         secondaryColor: church.secondary_color,
       });
-      
-      // Apply white label colors to CSS variables
-      document.documentElement.style.setProperty('--primary', `${hexToHsl(church.primary_color)}`);
-      document.documentElement.style.setProperty('--secondary', `${hexToHsl(church.secondary_color)}`);
     }
   }, [church]);
 
@@ -135,7 +131,13 @@ export default function ChurchProfile() {
   }
 
   return (
-    <div className="min-h-screen bg-gradient-to-br from-background to-secondary/20">
+    <div 
+      className="min-h-screen bg-gradient-to-br from-background to-secondary/20"
+      style={{
+        '--primary': hexToHsl(church.primary_color),
+        '--secondary': hexToHsl(church.secondary_color),
+      } as React.CSSProperties}
+    >
       <Header />
       
       <div className="container mx-auto px-4 py-8 space-y-8">
