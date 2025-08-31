@@ -132,6 +132,41 @@ const MissionaryProfile = () => {
         }
       }
 
+      // Buscar dados de apoio financeiro
+      const currentDate = new Date();
+      const firstDayOfMonth = new Date(currentDate.getFullYear(), currentDate.getMonth(), 1);
+      const lastDayOfMonth = new Date(currentDate.getFullYear(), currentDate.getMonth() + 1, 0);
+
+      // Buscar apoios do mês corrente
+      const { data: monthlySupports, error: monthlySupportsError } = await supabase
+        .from('missionary_supports')
+        .select('amount, is_recurring')
+        .eq('missionary_id', id)
+        .gte('created_at', firstDayOfMonth.toISOString())
+        .lte('created_at', lastDayOfMonth.toISOString());
+
+      // Buscar total de apoiadores únicos
+      const { data: uniqueSupporters, error: uniqueSupportersError } = await supabase
+        .from('missionary_supports')
+        .select('user_id')
+        .eq('missionary_id', id);
+
+      let monthlySupport = 0;
+      let supporters = 0;
+
+      if (!monthlySupportsError && monthlySupports) {
+        // Calcular renda mensal: doações únicas + recorrentes do mês corrente
+        monthlySupport = monthlySupports.reduce((total, support) => {
+          return total + parseFloat(support.amount.toString());
+        }, 0);
+      }
+
+      if (!uniqueSupportersError && uniqueSupporters) {
+        // Contar apoiadores únicos
+        const uniqueUserIds = new Set(uniqueSupporters.map(support => support.user_id));
+        supporters = uniqueUserIds.size;
+      }
+
       // Transformar dados para o formato esperado
       const transformedMissionary: MissionaryData = {
         id: missionaryData.id,
@@ -139,8 +174,8 @@ const MissionaryProfile = () => {
         location: missionaryData.current_location,
         mission: missionData?.objectives || missionData?.about || missionaryData.description,
         startDate: new Date(missionaryData.start_date).getFullYear().toString(),
-        supporters: Math.floor(Math.random() * 100) + 20, // Temporário
-        monthlySupport: Math.floor(Math.random() * 5000) + 3000, // Temporário
+        supporters: supporters,
+        monthlySupport: monthlySupport,
         avatar: missionaryData.photo_url || '/placeholder.svg',
         specialization: missionaryData.work_category,
         status: 'active',
@@ -382,7 +417,7 @@ const MissionaryProfile = () => {
               <Card className="bg-secondary/50 border-0">
                 <CardContent className="p-6 text-center">
                   <div className="text-2xl font-bold text-accent mb-2">R$ {missionary.monthlySupport.toLocaleString()}</div>
-                  <div className="text-muted-foreground text-sm mb-4">recebido mensalmente</div>
+                  <div className="text-muted-foreground text-sm mb-4">arrecadado este mês</div>
                   <div className="space-y-2">
                     <Button variant="support" className="w-full">
                       <Heart className="w-4 h-4" />
