@@ -232,7 +232,7 @@ const MissionaryProfile = () => {
 
   const isValidAmount = supportAmount && parseInt(supportAmount) >= 10;
 
-  const handleSupport = () => {
+  const handleSupport = async () => {
     if (!isValidAmount) {
       toast({
         title: "Valor inválido",
@@ -241,12 +241,56 @@ const MissionaryProfile = () => {
       });
       return;
     }
-    
-    // Aqui seria implementada a integração com o sistema de pagamento
-    toast({
-      title: "Redirecionando para pagamento",
-      description: `Processando ${supportType === 'monthly' ? 'apoio mensal' : 'pagamento único'} de R$ ${parseInt(supportAmount).toLocaleString()}`,
-    });
+
+    try {
+      // Verificar se o usuário está logado
+      const { data: { session } } = await supabase.auth.getSession();
+      
+      if (!session?.user) {
+        toast({
+          title: "Login necessário",
+          description: "Você precisa estar logado para apoiar um missionário",
+          variant: "destructive",
+        });
+        return;
+      }
+
+      // Registrar o apoio no banco de dados
+      const { error } = await supabase
+        .from('missionary_supports')
+        .insert({
+          user_id: session.user.id,
+          missionary_id: id,
+          amount: parseInt(supportAmount),
+          is_recurring: supportType === 'monthly',
+          status: 'pending',
+          payment_method: 'pending'
+        });
+
+      if (error) {
+        throw error;
+      }
+
+      toast({
+        title: "Apoio registrado!",
+        description: `${supportType === 'monthly' ? 'Apoio mensal' : 'Doação única'} de R$ ${parseInt(supportAmount).toLocaleString()} foi registrado com sucesso.`,
+      });
+
+      // Limpar o formulário
+      setSupportAmount('');
+      setSupportType('monthly');
+
+      // Aqui seria implementada a integração com o sistema de pagamento
+      // Por agora, apenas mostramos a confirmação
+      
+    } catch (error: any) {
+      console.error('Error registering support:', error);
+      toast({
+        title: "Erro ao registrar apoio",
+        description: error.message || "Tente novamente mais tarde",
+        variant: "destructive",
+      });
+    }
   };
 
   const missionPhases = [

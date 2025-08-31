@@ -193,6 +193,50 @@ export type Database = {
           },
         ]
       }
+      missionary_supports: {
+        Row: {
+          amount: number
+          created_at: string
+          id: string
+          is_recurring: boolean
+          missionary_id: string
+          payment_method: string | null
+          status: string
+          updated_at: string
+          user_id: string
+        }
+        Insert: {
+          amount: number
+          created_at?: string
+          id?: string
+          is_recurring?: boolean
+          missionary_id: string
+          payment_method?: string | null
+          status?: string
+          updated_at?: string
+          user_id: string
+        }
+        Update: {
+          amount?: number
+          created_at?: string
+          id?: string
+          is_recurring?: boolean
+          missionary_id?: string
+          payment_method?: string | null
+          status?: string
+          updated_at?: string
+          user_id?: string
+        }
+        Relationships: [
+          {
+            foreignKeyName: "missionary_supports_missionary_id_fkey"
+            columns: ["missionary_id"]
+            isOneToOne: false
+            referencedRelation: "missionary_applications"
+            referencedColumns: ["id"]
+          },
+        ]
+      }
       missions: {
         Row: {
           about: string
