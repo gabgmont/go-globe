@@ -22,40 +22,6 @@ const Index = () => {
   const { projects, loading: projectsLoading } = useMissionProjects();
   const { missionaries, loading: missionariesLoading } = useMissionaries();
 
-  // Mock data
-  const featuredProjects = [
-    {
-      id: '1',
-      title: 'Escola Comunitária em Moçambique',
-      location: 'Maputo, Moçambique',
-      description: 'Construção de uma escola para 200 crianças em comunidade carente, incluindo materiais didáticos e treinamento de professores locais.',
-      category: 'Educação',
-      progress: 45000,
-      goal: 120000,
-      supporters: 89,
-      urgent: true
-    },
-    {
-      id: '2',
-      title: 'Centro Médico Rural na Bolívia',
-      location: 'La Paz, Bolívia',
-      description: 'Estabelecimento de clínica médica em área rural, fornecendo cuidados básicos de saúde e programas de prevenção.',
-      category: 'Saúde',
-      progress: 78000,
-      goal: 95000,
-      supporters: 156
-    },
-    {
-      id: '3',
-      title: 'Programa de Alimentação no Camboja',
-      location: 'Siem Reap, Camboja',
-      description: 'Fornecimento de refeições nutritivas para crianças em situação de vulnerabilidade e educação nutricional para famílias.',
-      category: 'Assistência Social',
-      progress: 23000,
-      goal: 60000,
-      supporters: 67
-    }
-  ];
 
 
   const renderContent = () => {
