@@ -85,7 +85,7 @@ export const Header = ({ activeTab = 'inicio', onTabChange }: HeaderProps) => {
                   onClick={() => setChurchSignupModalOpen(true)} 
                   variant="outline"
                   size="sm"
-                  className="border-background/20 text-primary-foreground hover:bg-background/10"
+                  className="border-background/20 text-black hover:bg-background/10"
                 >
                   <span className="hidden sm:inline">Instituição</span>
                   <span className="sm:hidden">+</span>
