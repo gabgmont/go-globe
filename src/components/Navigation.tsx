@@ -12,8 +12,6 @@ export const Navigation = ({ activeTab, onTabChange }: NavigationProps) => {
     { id: 'inicio', label: 'Início', icon: Home },
     { id: 'projetos', label: 'Projetos', icon: FolderOpen },
     { id: 'missionarios', label: 'Missionários', icon: Users },
-    { id: 'missoes', label: 'Missões', icon: MapPin },
-    { id: 'apoio', label: 'Apoio', icon: Heart },
   ];
 
   return (

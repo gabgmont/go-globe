@@ -328,123 +328,6 @@ const Index = () => {
           </div>
         );
 
-      case 'missoes':
-        return (
-          <div className="container mx-auto px-4 space-y-8">
-            <div className="text-center">
-              <h2 className="text-3xl font-bold mb-4">Oportunidades de Missão</h2>
-              <p className="text-muted-foreground max-w-2xl mx-auto">
-                Faça parte da mudança. Descubra oportunidades de voluntariado e missões ao redor do mundo.
-              </p>
-            </div>
-            
-            <div className="grid lg:grid-cols-2 gap-8">
-              <Card className="shadow-card">
-                <CardHeader>
-                  <CardTitle className="flex items-center gap-2">
-                    <Globe className="w-5 h-5 text-primary" />
-                    Missões de Curto Prazo
-                  </CardTitle>
-                </CardHeader>
-                <CardContent className="space-y-4">
-                  <p className="text-muted-foreground">
-                    Participe de missões de 1 semana a 6 meses em diversos países.
-                  </p>
-                  <div className="space-y-2">
-                    <Badge>Construção</Badge>
-                    <Badge>Educação</Badge>
-                    <Badge>Saúde</Badge>
-                  </div>
-                  <Button variant="support" className="w-full">
-                    Ver Oportunidades
-                  </Button>
-                </CardContent>
-              </Card>
-
-              <Card className="shadow-card">
-                <CardHeader>
-                  <CardTitle className="flex items-center gap-2">
-                    <Target className="w-5 h-5 text-accent" />
-                    Missões de Longo Prazo
-                  </CardTitle>
-                </CardHeader>
-                <CardContent className="space-y-4">
-                  <p className="text-muted-foreground">
-                    Comprometa-se com missões de 1 a 5 anos em projetos transformadores.
-                  </p>
-                  <div className="space-y-2">
-                    <Badge>Plantação de Igrejas</Badge>
-                    <Badge>Desenvolvimento</Badge>
-                    <Badge>Liderança</Badge>
-                  </div>
-                  <Button variant="support" className="w-full">
-                    Inscrever-se
-                  </Button>
-                </CardContent>
-              </Card>
-            </div>
-          </div>
-        );
-
-      case 'apoio':
-        return (
-          <div className="container mx-auto px-4 space-y-8">
-            <div className="text-center">
-              <h2 className="text-3xl font-bold mb-4">Como Apoiar</h2>
-              <p className="text-muted-foreground max-w-2xl mx-auto">
-                Existem várias formas de fazer a diferença na vida de missionários e comunidades ao redor do mundo.
-              </p>
-            </div>
-            
-            <div className="grid md:grid-cols-3 gap-6">
-              <Card className="text-center shadow-card">
-                <CardContent className="p-6">
-                  <div className="bg-accent/10 w-16 h-16 rounded-full flex items-center justify-center mx-auto mb-4">
-                    <Heart className="w-8 h-8 text-accent" />
-                  </div>
-                  <h3 className="font-semibold text-lg mb-2">Apoio Mensal</h3>
-                  <p className="text-muted-foreground mb-4">
-                    Sustente um missionário com contribuições mensais regulares.
-                  </p>
-                  <Button variant="support" className="w-full">
-                    Começar Apoio
-                  </Button>
-                </CardContent>
-              </Card>
-
-              <Card className="text-center shadow-card">
-                <CardContent className="p-6">
-                  <div className="bg-primary/10 w-16 h-16 rounded-full flex items-center justify-center mx-auto mb-4">
-                    <Target className="w-8 h-8 text-primary" />
-                  </div>
-                  <h3 className="font-semibold text-lg mb-2">Apoio a Projetos</h3>
-                  <p className="text-muted-foreground mb-4">
-                    Contribua para projetos específicos e veja o impacto direto.
-                  </p>
-                  <Button variant="default" className="w-full">
-                    Ver Projetos
-                  </Button>
-                </CardContent>
-              </Card>
-
-              <Card className="text-center shadow-card">
-                <CardContent className="p-6">
-                  <div className="bg-impact/10 w-16 h-16 rounded-full flex items-center justify-center mx-auto mb-4">
-                    <Users className="w-8 h-8 text-impact" />
-                  </div>
-                  <h3 className="font-semibold text-lg mb-2">Voluntariado</h3>
-                  <p className="text-muted-foreground mb-4">
-                    Use suas habilidades para apoiar missões e projetos.
-                  </p>
-                  <Button variant="impact" className="w-full">
-                    Se Voluntariar
-                  </Button>
-                </CardContent>
-              </Card>
-            </div>
-          </div>
-        );
-
       default:
         return null;
     }
@@ -453,7 +336,7 @@ const Index = () => {
   return (
     <div className="min-h-screen bg-gradient-subtle">
       <Header activeTab={activeTab} onTabChange={setActiveTab} />
-      <main className="py-8">
+      <main>
         {renderContent()}
       </main>
       
