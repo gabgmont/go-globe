@@ -107,9 +107,6 @@ export default {
 				"slide-in-right": "slide-in-right 0.5s ease-out",
 				"pulse-glow": "pulse-glow 2s ease-in-out infinite",
 			},
-			textColor: {
-				DEFAULT: "#000000", // 👈 agora todo texto padrão é preto
-			},
 		},
 	},
 	plugins: [require("tailwindcss-animate")],
