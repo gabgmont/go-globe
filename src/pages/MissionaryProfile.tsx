@@ -384,33 +384,6 @@ const MissionaryProfile = () => {
                     </ReactMarkdown>
                   </div>
                 </div>
-                
-                <div>
-                  <h4 className="font-semibold mb-4">Fases da Missão</h4>
-                  <div className="space-y-4">
-                    {missionPhases.map((phase, index) => (
-                      <div key={index} className="flex items-center gap-4 p-4 bg-secondary/30 rounded-lg">
-                        <div className={`w-10 h-10 rounded-full flex items-center justify-center ${
-                          phase.status === 'completed' ? 'bg-accent text-accent-foreground' :
-                          phase.status === 'active' ? 'bg-primary text-primary-foreground' :
-                          'bg-muted text-muted-foreground'
-                        }`}>
-                          {phase.status === 'completed' ? (
-                            <CheckCircle className="w-5 h-5" />
-                          ) : phase.status === 'active' ? (
-                            <Clock className="w-5 h-5" />
-                          ) : (
-                            <Target className="w-5 h-5" />
-                          )}
-                        </div>
-                        <div>
-                          <h5 className="font-semibold">{phase.phase}</h5>
-                          <p className="text-sm text-muted-foreground">{phase.description}</p>
-                        </div>
-                      </div>
-                    ))}
-                  </div>
-                </div>
               </CardContent>
             </Card>
           </TabsContent>
