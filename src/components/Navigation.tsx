@@ -16,7 +16,7 @@ export const Navigation = ({ activeTab, onTabChange }: NavigationProps) => {
 
   return (
     <Tabs value={activeTab} onValueChange={onTabChange} className="w-full">
-      <TabsList className="flex w-fit  backdrop-blur-sm">
+      <TabsList className="flex w-fit">
         {tabs.map((tab) => {
           const IconComponent = tab.icon;
           return (
