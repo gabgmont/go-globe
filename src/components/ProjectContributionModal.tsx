@@ -1,4 +1,4 @@
-import { useState } from 'react';
+import { useState, useEffect } from 'react';
 import { Dialog, DialogContent, DialogDescription, DialogFooter, DialogHeader, DialogTitle } from '@/components/ui/dialog';
 import { Button } from '@/components/ui/button';
 import { Input } from '@/components/ui/input';
@@ -27,6 +27,10 @@ export const ProjectContributionModal = ({
   const [loading, setLoading] = useState(false);
   const { user } = useAuth();
   const { toast } = useToast();
+
+  useEffect(() => {
+    console.log('Modal state changed - isOpen:', isOpen);
+  }, [isOpen]);
 
   const handleAmountChange = (value: string) => {
     // Remove qualquer caractere que não seja número ou vírgula/ponto
@@ -91,6 +95,7 @@ export const ProjectContributionModal = ({
 
   return (
     <Dialog open={isOpen} onOpenChange={onClose}>
+      
       <DialogContent className="sm:max-w-md">
         <DialogHeader>
           <DialogTitle className="flex items-center gap-2">

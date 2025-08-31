@@ -45,7 +45,7 @@ export const ProjectCard = ({
   };
 
   return (
-    <Card className="group hover:shadow-card-hover transition-all duration-300 transform hover:-translate-y-1 border-0 shadow-card bg-gradient-to-br from-card to-card/95 cursor-pointer" onClick={handleProjectClick}>
+    <Card className="group hover:shadow-card-hover transition-all duration-300 transform hover:-translate-y-1 border-0 shadow-card bg-gradient-to-br from-card to-card/95">{/* Removed cursor-pointer and onClick from Card */}
       <CardHeader className="p-0">
         <div className="relative overflow-hidden rounded-t-lg h-48 bg-gradient-to-br from-primary/10 to-accent/10">
           {image ? (
@@ -117,13 +117,21 @@ export const ProjectCard = ({
             className="flex-1"
             onClick={(e) => {
               e.stopPropagation();
+              console.log('Botão contribuir clicado, abrindo modal...');
               setIsContributionModalOpen(true);
             }}
           >
             <Heart className="w-4 h-4" />
             Contribuir
           </Button>
-          <Button variant="outline" size="sm">
+          <Button 
+            variant="outline" 
+            size="sm"
+            onClick={(e) => {
+              e.stopPropagation();
+              handleProjectClick();
+            }}
+          >
             Ver mais
           </Button>
         </div>
