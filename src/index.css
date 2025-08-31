@@ -143,6 +143,14 @@ All colors MUST be HSL.
     background: var(--gradient-subtle);
   }
   
+  .bg-gradient-hero {
+    background: var(--gradient-hero);
+  }
+  
+  .bg-gradient-impact {
+    background: var(--gradient-impact);
+  }
+  
   .shadow-card {
     box-shadow: var(--shadow-card);
   }
@@ -161,5 +169,23 @@ All colors MUST be HSL.
   
   .transition-bounce {
     transition: var(--transition-bounce);
+  }
+
+  /* Typography utilities for vibrant communication */
+  .text-hero {
+    @apply text-6xl md:text-7xl lg:text-8xl font-black tracking-tight;
+    text-shadow: 2px 2px 4px rgba(0, 0, 0, 0.3);
+  }
+  
+  .text-impact {
+    @apply text-3xl md:text-4xl lg:text-5xl font-bold tracking-wide;
+  }
+  
+  .text-vibrant {
+    @apply text-xl md:text-2xl font-semibold tracking-wide;
+  }
+
+  .text-shadow-strong {
+    text-shadow: 2px 2px 8px rgba(0, 0, 0, 0.7);
   }
 }

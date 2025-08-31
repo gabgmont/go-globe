@@ -13,7 +13,8 @@ import { Carousel, CarouselContent, CarouselItem, CarouselPrevious, CarouselNext
 import { ArrowRight, Globe, Target, Users, Heart } from "lucide-react";
 import { useMissionProjects } from "@/hooks/useMissionProjects";
 import { useMissionaries } from "@/hooks/useMissionaries";
-import heroImage from "@/assets/hero-missions.jpg";
+import heroImage from "@/assets/hero-fullscreen.jpg";
+import communityImage from "@/assets/community-impact.jpg";
 
 const Index = () => {
   const [activeTab, setActiveTab] = useState('inicio');
@@ -62,35 +63,41 @@ const Index = () => {
       case 'inicio':
         return (
           <div className="space-y-12">
-            {/* Hero Section */}
-            <section className="relative h-96 lg:h-[500px] overflow-hidden rounded-xl shadow-hero">
+            {/* Hero Section - Full Screen */}
+            <section className="relative h-screen overflow-hidden -mx-4 md:-mx-6 lg:-mx-8">
               <div 
-                className="absolute inset-0 bg-cover bg-center"
+                className="absolute inset-0 bg-cover bg-center bg-fixed"
                 style={{ backgroundImage: `url(${heroImage})` }}
               />
-              <div className="absolute inset-0 bg-gradient-to-r from-primary/80 to-accent/60" />
-              <div className="relative z-10 h-full flex items-center">
-                <div className="container mx-auto px-4">
-                  <div className="max-w-2xl text-primary-foreground">
-                    <h2 className="text-4xl lg:text-6xl font-bold mb-6 leading-tight">
-                      Transformando
-                      <span className="block text-accent-glow">Vidas ao Redor</span>
-                      do Mundo
-                    </h2>
-                    <p className="text-lg lg:text-xl mb-8 opacity-90">
-                      Conecte-se com missionários dedicados e apoie projetos que fazem a diferença em comunidades ao redor do mundo.
+              <div className="absolute inset-0 bg-gradient-to-r from-primary/90 via-primary/70 to-accent/80" />
+              <div className="relative z-10 h-full flex items-center justify-center">
+                <div className="container mx-auto px-4 text-center">
+                  <div className="max-w-4xl mx-auto text-primary-foreground">
+                    <h1 className="text-hero text-shadow-strong mb-8 leading-[0.9]">
+                      TRANSFORMANDO
+                      <span className="block bg-gradient-impact bg-clip-text text-transparent">VIDAS</span>
+                      <span className="block">PELO MUNDO</span>
+                    </h1>
+                    <p className="text-vibrant mb-12 opacity-95 max-w-3xl mx-auto text-shadow-strong">
+                      Conecte-se com missionários dedicados e apoie projetos que fazem a diferença real em comunidades ao redor do mundo
                     </p>
-                    <div className="flex flex-col sm:flex-row gap-4">
-                      <Button variant="hero" size="xl">
-                        <Heart className="w-5 h-5" />
+                    <div className="flex flex-col sm:flex-row gap-6 justify-center">
+                      <Button variant="secondary" size="lg" className="text-lg px-8 py-4 transition-bounce hover:scale-105">
+                        <Heart className="w-6 h-6 mr-2" />
                         Começar a Apoiar
                       </Button>
-                      <Button variant="secondary" size="xl">
-                        <Users className="w-5 h-5" />
+                      <Button variant="outline" size="lg" className="text-lg px-8 py-4 border-2 border-white text-white hover:bg-white hover:text-primary transition-bounce hover:scale-105">
+                        <Users className="w-6 h-6 mr-2" />
                         Conhecer Missionários
                       </Button>
                     </div>
                   </div>
+                </div>
+              </div>
+              {/* Scroll indicator */}
+              <div className="absolute bottom-8 left-1/2 transform -translate-x-1/2 animate-bounce">
+                <div className="w-6 h-10 border-2 border-white rounded-full flex justify-center">
+                  <div className="w-1 h-3 bg-white rounded-full mt-2 animate-pulse"></div>
                 </div>
               </div>
             </section>
@@ -158,6 +165,42 @@ const Index = () => {
                   <p className="text-muted-foreground">Nenhum projeto encontrado no momento.</p>
                 </div>
               )}
+            </section>
+
+            {/* Impact Section */}
+            <section className="relative overflow-hidden -mx-4 md:-mx-6 lg:-mx-8 py-24">
+              <div 
+                className="absolute inset-0 bg-cover bg-center"
+                style={{ backgroundImage: `url(${communityImage})` }}
+              />
+              <div className="absolute inset-0 bg-gradient-to-r from-accent/90 to-impact/80" />
+              <div className="relative z-10">
+                <div className="container mx-auto px-4 text-center">
+                  <div className="max-w-4xl mx-auto text-accent-foreground">
+                    <h2 className="text-impact text-shadow-strong mb-8">
+                      JUNTOS FAZEMOS A
+                      <span className="block text-impact-foreground">DIFERENÇA</span>
+                    </h2>
+                    <p className="text-vibrant mb-8 opacity-95 text-shadow-strong">
+                      Cada apoio, cada oração, cada gesto de solidariedade se transforma em esperança e mudança real na vida de milhares de pessoas
+                    </p>
+                    <div className="grid md:grid-cols-3 gap-8 mt-12">
+                      <div className="bg-white/20 backdrop-blur-sm rounded-xl p-6 border border-white/30 transition-bounce hover:scale-105">
+                        <div className="text-4xl font-black text-white mb-2">150+</div>
+                        <div className="text-white font-semibold">Projetos Ativos</div>
+                      </div>
+                      <div className="bg-white/20 backdrop-blur-sm rounded-xl p-6 border border-white/30 transition-bounce hover:scale-105">
+                        <div className="text-4xl font-black text-white mb-2">50K+</div>
+                        <div className="text-white font-semibold">Vidas Impactadas</div>
+                      </div>
+                      <div className="bg-white/20 backdrop-blur-sm rounded-xl p-6 border border-white/30 transition-bounce hover:scale-105">
+                        <div className="text-4xl font-black text-white mb-2">25</div>
+                        <div className="text-white font-semibold">Países Alcançados</div>
+                      </div>
+                    </div>
+                  </div>
+                </div>
+              </div>
             </section>
 
             {/* Featured Missionaries */}
